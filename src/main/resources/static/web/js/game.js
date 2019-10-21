@@ -12,10 +12,11 @@ function loadData(){
         .done(function(data) {
             let playerInfo;
             if(data.gamePlayers[0].id == getParameterByName('gp'))
-               playerInfo = [data.gamePlayers[0].player.userName,data.gamePlayers[1].player.userName];
+               playerInfo = [data.gamePlayers[0].player.email,data.gamePlayers[1].player.email];
                 //ERROR EN LA LINEA DE ARRIBA NO ME MUESTRA PLAYER
             else
-               playerInfo = [data.gamePlayers[1].player.userName,data.gamePlayers[0].player.userName];
+               playerInfo = [data.gamePlayers[1].player.email,data.gamePlayers[0].player.email];
+               //ERROR EN LA LINEA DE ARRIBA NO ME MUESTRA PLAYER
 
             $('#playerInfo').text(playerInfo[0] + '(you) vs ' + playerInfo[1]);
 

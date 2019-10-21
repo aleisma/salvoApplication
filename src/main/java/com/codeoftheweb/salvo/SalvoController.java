@@ -35,15 +35,15 @@ public class SalvoController {
      GamePlayer gamePlayer = gamePlayerRepository.findById(nn).orElse(null);
        Game game = gamePlayer.getGames();
 
+     dto.put("id", game.getId());
+       dto.put("created", game.getCreationDate());
 
-        dto.put("id", game.getId());
-        dto.put("created", game.getCreationDate());
-        dto.put("gamePlayers", game.getGamePlayers()
+  dto.put("gamePlayers", game.getGamePlayers()
                 .stream()
-                .map(gam->game.makeGameDTO())
+                .map(gam->gamePlayer.makeGamePlayerDTO() )
                 .collect((Collectors.toList())));
 
-        dto.put("ship", gamePlayer.getShips()
+      dto.put("ship", gamePlayer.getShips()
                 .stream()
                 .map(ship -> ship.getShipDTO())
                 .collect((Collectors.toList())));

@@ -62,14 +62,15 @@ public class Ship {
     public void setShipsLocation(List<String> shipsLocation) {
         this.shipsLocation = shipsLocation;
     }
+
+
+
     //===== MAP Ship-GamePlayer ==========
-
-
     public Map<String, Object> getShipDTO() {
-        Map<String,Object>  shipDTO = new LinkedHashMap<>();
-        shipDTO.put("type", this.type);
-        shipDTO.put("locations", this.shipsLocation);
-        return shipDTO;
+        Map<String,Object>  dto= new LinkedHashMap<>();
+        dto.put("type", this.type);
+        dto.put("locations", this.shipsLocation);
+        return dto;
     }
 
 
