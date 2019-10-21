@@ -4,9 +4,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 public class GamePlayer {
@@ -29,6 +27,14 @@ public class GamePlayer {
     //*===== RELATION 1-N BETWEEN GamePlayer-Ship ==========
     @OneToMany(mappedBy = "gamePlayer", fetch = FetchType.EAGER)
     Set<Ship> ships;
+
+    //*===== RELATION 1-N BETWEEN GamePlayer-Salvo ==========
+    @OneToMany(mappedBy="gamePlayer",fetch=FetchType.EAGER)
+    Set<Salvo> salvoes;
+
+    private Date creationDate;
+
+    private GameState gameState;
 
     public GamePlayer(){
 
@@ -96,6 +102,14 @@ public class GamePlayer {
         this.ships = ships;
     }
 
+    public Set<Salvo> getSalvoes() {
+        return salvoes;
+    }
+
+    public void setSalvoes(Set<Salvo> salvoes) {
+        this.salvoes = salvoes;
+    }
+
     //===== MAP Player-GamePlayer ==========
     public Map<String, Object> makeGamePlayerDTO() {
         Map<String, Object> dto = new LinkedHashMap<>();
@@ -103,6 +117,9 @@ public class GamePlayer {
         dto.put("player", this.player.makePlayerDTO());
         return dto;
     }
+
+
+
 
 
 
