@@ -18,6 +18,10 @@ public class Game {
     @OneToMany(mappedBy = "game", fetch = FetchType.EAGER)
     private Set<GamePlayer> gamePlayers;
 
+    //*===== RELATION 1-N BETWEEN Player-Score ==========
+    @OneToMany(mappedBy = "game", fetch = FetchType.EAGER)
+    public Set<Score> scores;
+
     public Game() {
     }
     public Game(Long horas){
@@ -46,6 +50,30 @@ public class Game {
 
     public void setGamePlayers(Set<GamePlayer> gamePlayers) {
         this.gamePlayers = gamePlayers;
+    }
+
+    public Set<Score> getScores() {
+        return scores;
+    }
+
+    public void setScores(Set<Score> scores) {
+        this.scores = scores;
+    }
+
+
+    //===== MAP Game ==========
+   public Map<String, Object> makeGameDTO() {
+        Map<String, Object> dto = new LinkedHashMap<>();
+        dto.put("id", this.getId());
+        dto.put("created", this.getCreationDate());
+       dto.put("gamePlayers", this.getGamePlayers()
+               .stream()
+               .map(gam->gam.makeGamePlayerDTO() )
+               .collect((Collectors.toList())));
+       dto.put("scores",    this.getScores().stream().map(score -> score.makeScoreDTO()).collect(Collectors.toList()));
+
+
+       return dto;
     }
 
 

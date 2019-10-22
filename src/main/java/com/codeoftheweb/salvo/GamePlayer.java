@@ -14,6 +14,10 @@ public class GamePlayer {
     @Id
     private Long id;
     private LocalDateTime joinDate;
+
+    private Date creationDate;
+
+    private GameState gameState;
     //*===== RELATION 1-N BETWEEN Game-GamePlayer ==========
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="game_id")
@@ -32,12 +36,7 @@ public class GamePlayer {
     @OneToMany(mappedBy="gamePlayer",fetch=FetchType.EAGER)
     Set<Salvo> salvoes;
 
-    private Date creationDate;
-
-    private GameState gameState;
-
     public GamePlayer(){
-
     }
 
     public GamePlayer(Player player,Game game ){
@@ -102,6 +101,22 @@ public class GamePlayer {
         this.ships = ships;
     }
 
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    public GameState getGameState() {
+        return gameState;
+    }
+
+    public void setGameState(GameState gameState) {
+        this.gameState = gameState;
+    }
+
     public Set<Salvo> getSalvoes() {
         return salvoes;
     }
@@ -114,9 +129,14 @@ public class GamePlayer {
     public Map<String, Object> makeGamePlayerDTO() {
         Map<String, Object> dto = new LinkedHashMap<>();
         dto.put("id", this.getId());
-        dto.put("player", this.player.makePlayerDTO());
+        dto.put("player", player.makePlayerDTO());  // Tira un error cuando se crea un juego y nose agregan ambos jugadores
+                                                    // Por ese motivo se considero crear solo 8 GamePlayers ya que estaban completos.
         return dto;
     }
+
+
+
+
 
 
 

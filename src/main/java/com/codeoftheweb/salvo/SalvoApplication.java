@@ -15,7 +15,7 @@ public class SalvoApplication {
     }
 
     @Bean
-    public CommandLineRunner initData(PlayerRepository playerRepository , GameRepository gameRepository, GamePlayerRepository gamePlayerRepository, ShipRepository shipRepository, SalvoRepository salvoRepository) {
+    public CommandLineRunner initData(PlayerRepository playerRepository , GameRepository gameRepository, GamePlayerRepository gamePlayerRepository, ShipRepository shipRepository, SalvoRepository salvoRepository, ScoreRepository scoreRepository) {
         return (args) -> {
             //*===== SAVE PLAYERS ========================
             Player bauer = new Player ("j.bauer@ctu.gov");
@@ -63,14 +63,14 @@ public class SalvoApplication {
             GamePlayer gamePlayer9 = new GamePlayer(almeida, game5);
             GamePlayer gamePlayer10 = new GamePlayer(bauer, game5);
 
-            GamePlayer gamePlayer11 = new GamePlayer(kim_bauer, game6);
-            GamePlayer gamePlayer12 = new GamePlayer(null, game6);
+          /*  GamePlayer gamePlayer11 = new GamePlayer(kim_bauer, game6);
+            GamePlayer gamePlayer12 = new GamePlayer(null, game6); */
 
-            GamePlayer gamePlayer13 = new GamePlayer(almeida, game7);
-            GamePlayer gamePlayer14 = new GamePlayer(null, game7);
+           /* GamePlayer gamePlayer13 = new GamePlayer(almeida, game7);
+            GamePlayer gamePlayer14 = new GamePlayer(null, game7); */
 
-            GamePlayer gamePlayer15 = new GamePlayer(kim_bauer, game8);
-            GamePlayer gamePlayer16 = new GamePlayer(almeida, game8);
+            GamePlayer gamePlayer11 = new GamePlayer(kim_bauer, game8);
+            GamePlayer gamePlayer12 = new GamePlayer(almeida, game8);
 
 
             gamePlayerRepository.save(gamePlayer1);
@@ -83,12 +83,12 @@ public class SalvoApplication {
             gamePlayerRepository.save(gamePlayer8);
             gamePlayerRepository.save(gamePlayer9);
             gamePlayerRepository.save(gamePlayer10);
-            gamePlayerRepository.save(gamePlayer11);
+          /*  gamePlayerRepository.save(gamePlayer11);
             gamePlayerRepository.save(gamePlayer12);
             gamePlayerRepository.save(gamePlayer13);
-            gamePlayerRepository.save(gamePlayer14);
-            gamePlayerRepository.save(gamePlayer15);
-            gamePlayerRepository.save(gamePlayer16);
+            gamePlayerRepository.save(gamePlayer14); */
+            gamePlayerRepository.save(gamePlayer11);
+            gamePlayerRepository.save(gamePlayer12);
 
             //* =================== SHIPS ===================
             List<Ship> shipList = new ArrayList<>();
@@ -224,12 +224,12 @@ public class SalvoApplication {
             ship19.setGamePlayer(gamePlayer9);
             ship20.setGamePlayer(gamePlayer10);
             ship21.setGamePlayer(gamePlayer10);
-            ship22.setGamePlayer(gamePlayer11);
+          /*  ship22.setGamePlayer(gamePlayer11);
             ship23.setGamePlayer(gamePlayer11);
             ship24.setGamePlayer(gamePlayer13);
             ship25.setGamePlayer(gamePlayer13);
             ship26.setGamePlayer(gamePlayer14);
-            ship27.setGamePlayer(gamePlayer14);
+            ship27.setGamePlayer(gamePlayer14); */
 
             shipRepository.save(ship1);
             shipRepository.save(ship2);
@@ -307,6 +307,38 @@ public class SalvoApplication {
             salvoRepository.save(salvo19);
             salvoRepository.save(salvo20);
             salvoRepository.save(salvo21);
+
+            //* =================== SCORES ===================
+           Score scoreBauer1 = new Score(1.0,bauer, game1 );
+            Score scoreBauer2 = new Score(0.5,bauer, game2 );
+          Score scoreBauer3 = new Score(0.5,bauer, game4 );
+          //  Score scoreBauer4 = new Score(0.0 ,bauer, game5 );
+
+            Score scoreObrian1 = new Score(1.0,obrian, game1 );
+        //    Score scoreObrian2 = new Score(0.0,obrian, game2 );
+          Score scoreObrian3 = new Score(0.5,obrian, game3 );
+            Score scoreObrian4 = new Score(0.5,obrian, game4 );
+
+         //   Score scoreAlmeida1 = new Score(0.0,almeida, game3 );
+         //   Score scoreAlmeida2 = new Score(0.0,almeida, game6 );
+          //  Score scoreAlmeida3 = new Score(0.0,almeida, game3 );
+
+            scoreRepository.save(scoreBauer1);
+            scoreRepository.save(scoreBauer2);
+         scoreRepository.save(scoreBauer3);
+       // scoreRepository.save(scoreBauer4);
+
+           scoreRepository.save(scoreObrian1);
+          //  scoreRepository.save(scoreObrian2);
+            scoreRepository.save(scoreObrian3);
+            scoreRepository.save(scoreObrian4);
+
+          //  scoreRepository.save(scoreAlmeida1);
+          //  scoreRepository.save(scoreAlmeida2);
+          //  scoreRepository.save(scoreAlmeida3);
+
+
+
 
 
 

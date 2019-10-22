@@ -16,9 +16,29 @@ public class Player {
     private long id;
 
     private String  userName;
+    private String  email;
     //*===== RELATION 1-N BETWEEN Player-GamePlayer ==========
     @OneToMany(mappedBy = "player", fetch = FetchType.EAGER)
     public Set<GamePlayer> gamePlayers;
+
+    //*===== RELATION 1-N BETWEEN Player-Score ==========
+    @OneToMany(mappedBy = "player", fetch = FetchType.EAGER)
+    public Set<Score> scores;
+
+    public Player() { }
+
+    public Player(String userName) {
+        this.userName = userName;
+
+    }
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
 
     public Set<GamePlayer> getGamePlayers() {
         return gamePlayers;
@@ -36,18 +56,12 @@ public class Player {
         this.userName = userName;
     }
 
-    public Player() { }
 
-    public Player(String userName) {
-        this.userName = userName;
-
+    public Set<Score> getScores() {
+        return scores;
     }
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
+    public void setScores(Set<Score> scores) {
+        this.scores = scores;
     }
 
     //===== MAP Player-GamePlayer ==========
