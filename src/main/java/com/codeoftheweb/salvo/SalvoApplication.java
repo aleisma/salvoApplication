@@ -1,27 +1,47 @@
 package com.codeoftheweb.salvo;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configuration.GlobalAuthenticationConfigurerAdapter;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 @SpringBootApplication
-public class SalvoApplication {
+public class SalvoApplication extends SpringBootServletInitializer {
     public static void main(String[] args) {
         SpringApplication.run(SalvoApplication.class);
+
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
     @Bean
     public CommandLineRunner initData(PlayerRepository playerRepository , GameRepository gameRepository, GamePlayerRepository gamePlayerRepository, ShipRepository shipRepository, SalvoRepository salvoRepository, ScoreRepository scoreRepository) {
         return (args) -> {
             //*===== SAVE PLAYERS ========================
-            Player bauer = new Player ("j.bauer@ctu.gov");
-            Player obrian = new Player ("c.obrian@ctu.gov");
-            Player kim_bauer = new Player ("kim_bauer@gmail.com");
-            Player almeida = new Player ("t.almeida@ctu.gov");
+            Player bauer = new Player ("j.bauer@ctu.gov", "24");
+            Player obrian = new Player ("c.obrian@ctu.gov", "42" );
+            Player kim_bauer = new Player ("kim_bauer@gmail.com", "kb");
+            Player almeida = new Player ("t.almeida@ctu.gov", "mole");
 
             playerRepository.save(bauer);
             playerRepository.save(obrian);
@@ -63,14 +83,14 @@ public class SalvoApplication {
             GamePlayer gamePlayer9 = new GamePlayer(almeida, game5);
             GamePlayer gamePlayer10 = new GamePlayer(bauer, game5);
 
-          /*  GamePlayer gamePlayer11 = new GamePlayer(kim_bauer, game6);
-            GamePlayer gamePlayer12 = new GamePlayer(null, game6); */
+            /*GamePlayer gamePlayer11 = new GamePlayer(kim_bauer, game6);
+            GamePlayer gamePlayer12 = new GamePlayer(null, game6);*/
 
-           /* GamePlayer gamePlayer13 = new GamePlayer(almeida, game7);
-            GamePlayer gamePlayer14 = new GamePlayer(null, game7); */
+         /* GamePlayer gamePlayer13 = new GamePlayer(almeida, game7);
+            GamePlayer gamePlayer14 = new GamePlayer(null, game7);*/
 
-            GamePlayer gamePlayer11 = new GamePlayer(kim_bauer, game8);
-            GamePlayer gamePlayer12 = new GamePlayer(almeida, game8);
+            GamePlayer gamePlayer15 = new GamePlayer(kim_bauer, game8);
+            GamePlayer gamePlayer16 = new GamePlayer(almeida, game8);
 
 
             gamePlayerRepository.save(gamePlayer1);
@@ -83,12 +103,12 @@ public class SalvoApplication {
             gamePlayerRepository.save(gamePlayer8);
             gamePlayerRepository.save(gamePlayer9);
             gamePlayerRepository.save(gamePlayer10);
-          /*  gamePlayerRepository.save(gamePlayer11);
+           /* gamePlayerRepository.save(gamePlayer11);
             gamePlayerRepository.save(gamePlayer12);
             gamePlayerRepository.save(gamePlayer13);
-            gamePlayerRepository.save(gamePlayer14); */
-            gamePlayerRepository.save(gamePlayer11);
-            gamePlayerRepository.save(gamePlayer12);
+            gamePlayerRepository.save(gamePlayer14);*/
+            gamePlayerRepository.save(gamePlayer15);
+            gamePlayerRepository.save(gamePlayer16);
 
             //* =================== SHIPS ===================
             List<Ship> shipList = new ArrayList<>();
@@ -224,12 +244,13 @@ public class SalvoApplication {
             ship19.setGamePlayer(gamePlayer9);
             ship20.setGamePlayer(gamePlayer10);
             ship21.setGamePlayer(gamePlayer10);
-          /*  ship22.setGamePlayer(gamePlayer11);
+            /* ship22.setGamePlayer(gamePlayer11);
             ship23.setGamePlayer(gamePlayer11);
             ship24.setGamePlayer(gamePlayer13);
             ship25.setGamePlayer(gamePlayer13);
             ship26.setGamePlayer(gamePlayer14);
-            ship27.setGamePlayer(gamePlayer14); */
+            ship27.setGamePlayer(gamePlayer14);*/
+
 
             shipRepository.save(ship1);
             shipRepository.save(ship2);
@@ -312,7 +333,7 @@ public class SalvoApplication {
            Score scoreBauer1 = new Score(1.0,bauer, game1 );
             Score scoreBauer2 = new Score(0.5,bauer, game2 );
           Score scoreBauer3 = new Score(0.5,bauer, game4 );
-          //  Score scoreBauer4 = new Score(0.0 ,bauer, game5 );
+        // Score scoreBauer4 = new Score(0.0 ,bauer, game5 );
 
             Score scoreObrian1 = new Score(1.0,obrian, game1 );
         //    Score scoreObrian2 = new Score(0.0,obrian, game2 );
@@ -326,7 +347,7 @@ public class SalvoApplication {
             scoreRepository.save(scoreBauer1);
             scoreRepository.save(scoreBauer2);
          scoreRepository.save(scoreBauer3);
-       // scoreRepository.save(scoreBauer4);
+     // scoreRepository.save(scoreBauer4);
 
            scoreRepository.save(scoreObrian1);
           //  scoreRepository.save(scoreObrian2);
@@ -339,12 +360,89 @@ public class SalvoApplication {
 
 
 
-
-
-
-
         };
+    }
+    }
+
+@EnableWebSecurity
+@Configuration
+class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+
+
+        //*=============== AUTHENTICATION =========================
+
+        http.formLogin()
+              .usernameParameter("userName")
+                .passwordParameter("password")
+                .loginPage("/api/login");
+
+        //*=============== DANDO AUTORIZACIÓN A USERS =========================
+        http.authorizeRequests()
+                .antMatchers("/web/**").permitAll()
+                .antMatchers("api/game_view/*").hasAuthority("USER")
+                .antMatchers("/h2-console/**").permitAll()
+                .antMatchers("/api/games").permitAll();
+
+        http.logout().logoutUrl("/api/logout");
+
 
     }
+
 }
+
+@Configuration
+class WebSecurityConfiguration extends GlobalAuthenticationConfigurerAdapter {
+
+    @Autowired
+    PlayerRepository playerRepository;
+
+    @Override
+    public void init(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(inputName-> {
+            Player player = playerRepository.findByUserName(inputName);
+            if (player != null) {
+                return new User(player.getUserName(), player.getPassword(),
+                        AuthorityUtils.createAuthorityList("USER"));
+            } else {
+                throw new UsernameNotFoundException("Unknown user: " + inputName);
+            }
+        });
+}
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

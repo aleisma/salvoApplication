@@ -1,6 +1,8 @@
 package com.codeoftheweb.salvo;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
 import java.util.LinkedHashMap;
@@ -16,7 +18,9 @@ public class Player {
     private long id;
 
     private String  userName;
-    private String  email;
+
+    private String password;
+
     //*===== RELATION 1-N BETWEEN Player-GamePlayer ==========
     @OneToMany(mappedBy = "player", fetch = FetchType.EAGER)
     public Set<GamePlayer> gamePlayers;
@@ -27,25 +31,17 @@ public class Player {
 
     public Player() { }
 
-    public Player(String userName) {
+    public Player(String userName, String password) {
         this.userName = userName;
-
+        this.password = password;
     }
+
     public long getId() {
         return id;
     }
 
     public void setId(long id) {
         this.id = id;
-    }
-
-
-    public Set<GamePlayer> getGamePlayers() {
-        return gamePlayers;
-    }
-
-    public void setGamePlayers(Set<GamePlayer> gamePlayers) {
-        this.gamePlayers = gamePlayers;
     }
 
     public String getUserName() {
@@ -56,12 +52,28 @@ public class Player {
         this.userName = userName;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
     public Set<Score> getScores() {
         return scores;
     }
+
     public void setScores(Set<Score> scores) {
         this.scores = scores;
+    }
+
+    public Set<GamePlayer> getGamePlayers() {
+        return gamePlayers;
+    }
+
+    public void setGamePlayers(Set<GamePlayer> gamePlayers) {
+        this.gamePlayers = gamePlayers;
     }
 
     //===== MAP Player-GamePlayer ==========
@@ -71,7 +83,6 @@ public class Player {
         dto.put("email", this.getUserName());
         return dto;
     }
-
 }
 
 

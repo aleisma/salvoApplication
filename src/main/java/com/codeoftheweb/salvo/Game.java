@@ -72,7 +72,6 @@ public class Game {
                .collect((Collectors.toList())));
        dto.put("scores",    this.getScores().stream().map(score -> score.makeScoreDTO()).collect(Collectors.toList()));
 
-
        return dto;
     }
 
