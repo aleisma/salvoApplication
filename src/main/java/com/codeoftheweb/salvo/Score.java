@@ -18,7 +18,7 @@ public class Score {
 
     private LocalDateTime finishDate;
 
-    //*===== RELATION 1-N BETWEEN Game-Score ==========
+   //*===== RELATION 1-N BETWEEN Game-Score ==========
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="game_id")
     private Game game;
@@ -27,12 +27,7 @@ public class Score {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="player_id")
     private Player player;
-
-   //*===== RELATION 1-N BETWEEN GamePlayer-Scores ==========
-    @OneToMany(mappedBy = "score", fetch = FetchType.EAGER)
-   Set<Score> scores;
-
-
+    
     public Score(){}
 
     public Score( Double score, Player player,Game game){
@@ -82,15 +77,7 @@ public class Score {
         this.finishDate = finishDate;
     }
 
-    public Set<Score> getScores() {
-        return scores;
-    }
-
-    public void setScores(Set<Score> scores) {
-        this.scores = scores;
-    }
-
-    //===== MAP Score==========
+     //===== MAP Score==========
     public Map<String, Object> makeScoreDTO() {
         Map<String, Object> dto = new LinkedHashMap<>();
         dto.put("player", this.getPlayer().getId());
@@ -98,10 +85,5 @@ public class Score {
         dto.put("finishDate",this.getFinishDate());
         return dto;
     }
-
-
-
-
-
 
 }
