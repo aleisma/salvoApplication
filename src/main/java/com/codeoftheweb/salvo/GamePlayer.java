@@ -15,9 +15,7 @@ public class GamePlayer {
     private Long id;
     private LocalDateTime joinDate;
 
-    private Date creationDate;
-
-    private GameState gameState;
+  
     //*===== RELATION 1-N BETWEEN Game-GamePlayer ==========
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="game_id")
@@ -101,22 +99,6 @@ public class GamePlayer {
         this.ships = ships;
     }
 
-    public Date getCreationDate() {
-        return creationDate;
-    }
-
-    public void setCreationDate(Date creationDate) {
-        this.creationDate = creationDate;
-    }
-
-    public GameState getGameState() {
-        return gameState;
-    }
-
-    public void setGameState(GameState gameState) {
-        this.gameState = gameState;
-    }
-
     public Set<Salvo> getSalvoes() {
         return salvoes;
     }
@@ -133,17 +115,6 @@ public class GamePlayer {
                                                     // Por ese motivo se considero crear solo 8 GamePlayers ya que estaban completos.
         return dto;
     }
-
-
-
-
-
-
-
-
-
-
-
 
 
 
