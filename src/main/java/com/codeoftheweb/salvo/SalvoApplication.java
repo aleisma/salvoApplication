@@ -247,6 +247,7 @@ public class SalvoApplication {
             ship19.setGamePlayer(gamePlayer9);
             ship20.setGamePlayer(gamePlayer10);
             ship21.setGamePlayer(gamePlayer10);
+
           /*  ship22.setGamePlayer(gamePlayer11);
             ship23.setGamePlayer(gamePlayer11);
             ship24.setGamePlayer(gamePlayer13);
@@ -335,30 +336,28 @@ public class SalvoApplication {
            Score scoreBauer1 = new Score(1.0,bauer, game1 );
             Score scoreBauer2 = new Score(0.5,bauer, game2 );
           Score scoreBauer3 = new Score(0.5,bauer, game4 );
-          //  Score scoreBauer4 = new Score(0.0 ,bauer, game5 );
+          Score scoreBauer4 = new Score(0.0 ,bauer, game5 );
 
             Score scoreObrian1 = new Score(1.0,obrian, game1 );
-        //    Score scoreObrian2 = new Score(0.0,obrian, game2 );
+          Score scoreObrian2 = new Score(0.0,obrian, game2 );
           Score scoreObrian3 = new Score(0.5,obrian, game3 );
             Score scoreObrian4 = new Score(0.5,obrian, game4 );
 
-         //   Score scoreAlmeida1 = new Score(0.0,almeida, game3 );
-         //   Score scoreAlmeida2 = new Score(0.0,almeida, game6 );
-          //  Score scoreAlmeida3 = new Score(0.0,almeida, game3 );
+          Score scoreAlmeida1 = new Score(0.0,almeida, game3 );
+           Score scoreAlmeida2 = new Score(0.0,almeida, game6 );
+          Score scoreAlmeida3 = new Score(0.0,almeida, game3 );
 
             scoreRepository.save(scoreBauer1);
             scoreRepository.save(scoreBauer2);
-         scoreRepository.save(scoreBauer3);
-       // scoreRepository.save(scoreBauer4);
-
-           scoreRepository.save(scoreObrian1);
-          //  scoreRepository.save(scoreObrian2);
+            scoreRepository.save(scoreBauer3);
+            scoreRepository.save(scoreBauer4);
+            scoreRepository.save(scoreObrian1);
+            scoreRepository.save(scoreObrian2);
             scoreRepository.save(scoreObrian3);
             scoreRepository.save(scoreObrian4);
-
-          //  scoreRepository.save(scoreAlmeida1);
-          //  scoreRepository.save(scoreAlmeida2);
-          //  scoreRepository.save(scoreAlmeida3);
+            scoreRepository.save(scoreAlmeida1);
+            scoreRepository.save(scoreAlmeida2);
+            scoreRepository.save(scoreAlmeida3);
 
 
         };
@@ -395,7 +394,6 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-
 
         //*=============== AUTHORIZATION =========================
         http.authorizeRequests()

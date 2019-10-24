@@ -28,9 +28,7 @@ public class Score {
     @JoinColumn(name="player_id")
     private Player player;
 
-   //*===== RELATION 1-N BETWEEN GamePlayer-Scores ==========
-    @OneToMany(mappedBy = "score", fetch = FetchType.EAGER)
-   Set<Score> scores;
+
 
 
     public Score(){}
@@ -80,14 +78,6 @@ public class Score {
 
     public void setFinishDate(LocalDateTime finishDate) {
         this.finishDate = finishDate;
-    }
-
-    public Set<Score> getScores() {
-        return scores;
-    }
-
-    public void setScores(Set<Score> scores) {
-        this.scores = scores;
     }
 
      //===== MAP Score==========
