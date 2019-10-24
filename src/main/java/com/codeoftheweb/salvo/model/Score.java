@@ -1,11 +1,12 @@
-package com.codeoftheweb.salvo;
+package com.codeoftheweb.salvo.model;
 
+import com.codeoftheweb.salvo.model.Game;
+import com.codeoftheweb.salvo.model.Player;
 import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 
 @Entity
 public class Score {
@@ -27,9 +28,6 @@ public class Score {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="player_id")
     private Player player;
-
-
-
 
     public Score(){}
 
@@ -88,11 +86,5 @@ public class Score {
         dto.put("finishDate",this.getFinishDate());
         return dto;
     }
-
-
-
-
-
-
 
 }

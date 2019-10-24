@@ -1,5 +1,11 @@
-package com.codeoftheweb.salvo;
+package com.codeoftheweb.salvo.controller;
 
+import com.codeoftheweb.salvo.repositories.GamePlayerRepository;
+import com.codeoftheweb.salvo.repositories.GameRepository;
+import com.codeoftheweb.salvo.repositories.PlayerRepository;
+import com.codeoftheweb.salvo.model.Game;
+import com.codeoftheweb.salvo.model.GamePlayer;
+import com.codeoftheweb.salvo.model.Player;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
