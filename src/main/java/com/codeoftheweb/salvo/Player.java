@@ -1,10 +1,13 @@
 package com.codeoftheweb.salvo;
 
 import org.hibernate.annotations.GenericGenerator;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+import javax.persistence.*;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
 
 @Entity
 public class Player {
@@ -16,19 +19,21 @@ public class Player {
 
     private String  userName;
 
-    public String getUserName() {
-        return userName;
-    }
+    private String password;
 
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
+    //*===== RELATION 1-N BETWEEN Player-GamePlayer ==========
+    @OneToMany(mappedBy = "player", fetch = FetchType.EAGER)
+    public Set<GamePlayer> gamePlayers;
+
+    //*===== RELATION 1-N BETWEEN Player-Score ==========
+    @OneToMany(mappedBy = "player", fetch = FetchType.EAGER)
+    public Set<Score> scores;
 
     public Player() { }
 
-    public Player(String userName) {
+    public Player(String userName, String password) {
         this.userName = userName;
-
+        this.password = password;
     }
 
     public long getId() {
@@ -39,6 +44,45 @@ public class Player {
         this.id = id;
     }
 
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public Set<Score> getScores() {
+        return scores;
+    }
+
+    public void setScores(Set<Score> scores) {
+        this.scores = scores;
+    }
+
+    public Set<GamePlayer> getGamePlayers() {
+        return gamePlayers;
+    }
+
+    public void setGamePlayers(Set<GamePlayer> gamePlayers) {
+        this.gamePlayers = gamePlayers;
+    }
+
+    //===== MAP Player-GamePlayer ==========
+    public Map<String, Object> makePlayerDTO() {
+        Map<String, Object> dto = new LinkedHashMap<>();
+        dto.put("id", this.getId());
+        dto.put("email", this.getUserName());
+        return dto;
+    }
 }
 
 
