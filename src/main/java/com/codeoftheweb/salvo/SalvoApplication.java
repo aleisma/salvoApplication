@@ -364,61 +364,6 @@ public class SalvoApplication extends SpringBootServletInitializer {
     }
     }
 
-@EnableWebSecurity
-@Configuration
-class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-
-
-        //*=============== AUTHENTICATION =========================
-
-        http.formLogin()
-              .usernameParameter("userName")
-                .passwordParameter("password")
-                .loginPage("/api/login");
-
-        //*=============== DANDO AUTORIZACIÓN A USERS =========================
-        http.authorizeRequests()
-                .antMatchers("/web/**").permitAll()
-                .antMatchers("api/game_view/*").hasAuthority("USER")
-                .antMatchers("/h2-console/**").permitAll()
-                .antMatchers("/api/games").permitAll();
-
-        http.logout().logoutUrl("/api/logout");
-
-
-    }
-
-}
-
-@Configuration
-class WebSecurityConfiguration extends GlobalAuthenticationConfigurerAdapter {
-
-    @Autowired
-    PlayerRepository playerRepository;
-
-    @Override
-    public void init(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(inputName-> {
-            Player player = playerRepository.findByUserName(inputName);
-            if (player != null) {
-                return new User(player.getUserName(), player.getPassword(),
-                        AuthorityUtils.createAuthorityList("USER"));
-            } else {
-                throw new UsernameNotFoundException("Unknown user: " + inputName);
-            }
-        });
-}
-
-
-
-
-
-
-
-}
 
 
 
