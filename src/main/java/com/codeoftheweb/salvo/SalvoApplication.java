@@ -367,7 +367,7 @@ public class SalvoApplication {
 
 }
 
-//============ VALIDACION =============================================
+//============ VALIDATION =============================================
 @Configuration
 class WebSecurityConfiguration extends GlobalAuthenticationConfigurerAdapter {
 
@@ -397,24 +397,24 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
 
 
-        //====== AUTHORIZATION =============
-
+        //*=============== AUTHORIZATION =========================
         http.authorizeRequests()
-                .antMatchers("/admin/**").hasAuthority("ADMIN")
-                .antMatchers("/**").hasAuthority("USER")
-                .and()
-                .formLogin();
-
-        //====== AUTHENTICATION =============
+                .antMatchers("/web/**").permitAll()
+                .antMatchers("/api/login/**").permitAll()
+                .antMatchers("api/game_view/*").hasAuthority("USER")
+                .antMatchers("/h2-console/**").permitAll()
+                .antMatchers("/api/games").permitAll();
 
         http.formLogin()
                 .usernameParameter("name")
                 .passwordParameter("pwd")
-                .loginPage("/app/login");
+                .loginPage("/api/login");
 
-        http.logout().logoutUrl("/app/logout");
+  //==============Render Console========
+        http.headers().frameOptions().disable();
 
-        // turn off checking for CSRF tokens
+        http.logout().logoutUrl("/api/logout");
+     // turn off checking for CSRF tokens
         http.csrf().disable();
 
         // if user is not authenticated, just send an authentication failure response
@@ -436,9 +436,7 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             session.removeAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
         }
     }
-
-    }
-
+}
 
 
 

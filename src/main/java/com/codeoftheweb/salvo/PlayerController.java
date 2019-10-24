@@ -21,17 +21,17 @@ public class PlayerController {
     @RequestMapping(path = "/players", method = RequestMethod.POST)
     public ResponseEntity<Object> register(
 
-            @RequestParam String email, @RequestParam String password) {
+            @RequestParam String userName, @RequestParam String password) {
 
-        if ( email.isEmpty() || password.isEmpty()) {
+        if ( userName.isEmpty() || password.isEmpty()) {
             return new ResponseEntity<>("Missing data", HttpStatus.FORBIDDEN);
         }
 
-        if (playerRepository.findByUserName(email) !=  null) {
+        if (playerRepository.findByUserName(userName) !=  null) {
             return new ResponseEntity<>("Name already in use", HttpStatus.FORBIDDEN);
         }
 
-        playerRepository.save(new Player(email, passwordEncoder.encode(password)));
+        playerRepository.save(new Player(userName, passwordEncoder.encode(password)));
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
