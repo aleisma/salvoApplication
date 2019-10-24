@@ -18,11 +18,11 @@ function loadData() {
 
       $('#playerInfo').text(playerInfo[0].email + '(you) vs ' + playerInfo[1].email);
 
-      data.ship.forEach(function (shipPiece) {
+      data.ships.forEach(function (shipPiece) {
         shipPiece.locations.forEach(function (shipLocation) {
           if(isHit(shipLocation,data.salvoes,playerInfo[0].id)  !=  0){
             $('#B_' + shipLocation).addClass('ship-piece-hited');
-            $('#B_' + shipLocation).text(isHit(shipLocation,data.salvoes,playerInfo[0].id));
+                        $('#B_' + shipLocation).text(isHit(shipLocation,data.salvoes,playerInfo[0].id));
           }
 
           else
@@ -33,8 +33,6 @@ function loadData() {
         if (playerInfo[0].id === salvo.player) {
           salvo.locations.forEach(function (location) {
             $('#S_' + location).addClass('salvo-piece');
-            $('#S_' + location).text(salvo.turn);
-
           });
         } else {
           salvo.locations.forEach(function (location) {

@@ -15,9 +15,7 @@ public class GamePlayer {
     private Long id;
     private LocalDateTime joinDate;
 
-    private Date creationDate;
 
-    private GameState gameState;
     //*===== RELATION 1-N BETWEEN Game-GamePlayer ==========
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="game_id")
@@ -99,22 +97,6 @@ public class GamePlayer {
 
     public void setShips(Set<Ship> ships) {
         this.ships = ships;
-    }
-
-    public Date getCreationDate() {
-        return creationDate;
-    }
-
-    public void setCreationDate(Date creationDate) {
-        this.creationDate = creationDate;
-    }
-
-    public GameState getGameState() {
-        return gameState;
-    }
-
-    public void setGameState(GameState gameState) {
-        this.gameState = gameState;
     }
 
     public Set<Salvo> getSalvoes() {

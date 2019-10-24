@@ -16,7 +16,7 @@ public class Player {
     private long id;
 
     private String  userName;
-    private String  email;
+
     //*===== RELATION 1-N BETWEEN Player-GamePlayer ==========
     @OneToMany(mappedBy = "player", fetch = FetchType.EAGER)
     public Set<GamePlayer> gamePlayers;

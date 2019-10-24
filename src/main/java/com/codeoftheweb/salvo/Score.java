@@ -90,7 +90,7 @@ public class Score {
         this.scores = scores;
     }
 
-    //===== MAP Score==========
+     //===== MAP Score==========
     public Map<String, Object> makeScoreDTO() {
         Map<String, Object> dto = new LinkedHashMap<>();
         dto.put("player", this.getPlayer().getId());
@@ -98,6 +98,7 @@ public class Score {
         dto.put("finishDate",this.getFinishDate());
         return dto;
     }
+
 
 
 
