@@ -29,16 +29,11 @@ public class ShipController {
     @RequestMapping(path = "/games/players/{gamePlayerId}/ships", method = RequestMethod.POST)
     public ResponseEntity<Object> getShips(@PathVariable String gamePlayerID, @RequestBody List<Ship> ships, Authentication authentication ) {
 
-
-
+       //Ship ship = ships.setGamePlayer(gamePlayerID);
+        //shipRepository.save(ship);
 
         Player player = playerRepository.findByUserName(gamePlayerID);
         playerRepository.save(player);
-
-
-
-
-
 
 
         if (isGuest(authentication)){

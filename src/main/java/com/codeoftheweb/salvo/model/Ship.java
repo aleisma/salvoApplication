@@ -16,7 +16,10 @@ public class Ship {
     private String type;
     //*===== LIST CREATED SHIP LOCATIONS ==========
     @ElementCollection
-    @Column(name="shipsLocation")
+    @Column(name="location")
+
+
+     //CAMBIAR A LOCATION
     private List<String> shipsLocation;
 
     //*===== RELATION 1-N BETWEEN Ship-GamePlayer ==========
