@@ -201,7 +201,7 @@ function showSelf (gamePlayerData) {
     $('#OpponentPlayerName').text(viewer);
 
 
-    gamePlayerData.ships.forEach(function(ship) {
+    gamePlayerData.ship.forEach(function(ship) {
 
         let firstCellID;
         firstCellID = "#p1_" + ship.locations[0];

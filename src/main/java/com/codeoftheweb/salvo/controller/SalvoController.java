@@ -14,9 +14,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -32,21 +30,21 @@ public class SalvoController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-   private Player isPlayer(Authentication authentication) {
+    private Player isPlayer(Authentication authentication) {
         return playerRepository.findByUserName(authentication.getName());
     }
 
     @RequestMapping("/games")
     public Map<String, Object> getGameAll(Authentication authentication) {
-       Map<String, Object> dto = new LinkedHashMap<String, Object>();
+        Map<String, Object> dto = new LinkedHashMap<String, Object>();
 
-    if(isGuest(authentication)){
-        dto.put("player", "Guest");
-    }
-    else{
-        Player player  = playerRepository.findByUserName(authentication.getName());
-        dto.put("player", player.makePlayerDTO());
-    }
+        if(isGuest(authentication)){
+            dto.put("player", "Guest");
+        }
+        else{
+            Player player  = playerRepository.findByUserName(authentication.getName());
+            dto.put("player", player.makePlayerDTO());
+        }
 
         dto.put("games", gameRepository.findAll()
                 .stream()
@@ -79,35 +77,41 @@ public class SalvoController {
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     @RequestMapping("/game_view/{nn}")
-    public Map<String, Object> a(@PathVariable long nn){
-        Map<String, Object>dto = new LinkedHashMap<String, Object>();
+    public ResponseEntity<Map<String, Object>> getViewGP(@PathVariable Long nn, Authentication  authentication){
+
+        if(isGuest(authentication)){
+            return new  ResponseEntity<>(makeMap("ERROR!!","NO PUEDE ACCEDER A ESTA VISTA"),HttpStatus.UNAUTHORIZED);
+        }
+
+        Player  player  = playerRepository.findByUserName(authentication.getName());
 
         GamePlayer gamePlayer = gamePlayerRepository.findById(nn).orElse(null);
         Game game = gamePlayer.getGames();
 
+        if(player==null){
+            return new  ResponseEntity<>(makeMap("ERROR!","PLAYER NO EXISTE"),HttpStatus.UNAUTHORIZED);
+        }
+
+        if(gamePlayer == null ){
+            return  new ResponseEntity<>(makeMap("ERROR!"," GP NO EXISTE"), HttpStatus.UNAUTHORIZED);
+
+        }
+
+        if(gamePlayer.getPlayer().getId() !=  player.getId()){
+            return new  ResponseEntity<>(makeMap("ERROR!!","NO PUEDE ACCEDER A ESTA VISTA"),HttpStatus.CONFLICT);
+        }
+
+        Map<String, Object>dto = new LinkedHashMap<String, Object>();
         dto.put("id", game.getId());
         dto.put("created", game.getCreationDate());
+
+
+        Map<String, Object> hits = new LinkedHashMap<>();
+        hits.put("self", new ArrayList<>());
+        hits.put("opponent", new ArrayList<>());
+
+        dto.put("gameState", "PLACESHIPS");
 
         dto.put("gamePlayers", game.getGamePlayers()
                 .stream()
@@ -126,21 +130,27 @@ public class SalvoController {
                         .map(salvo -> salvo.makeSalvoDTO()))
                 .collect((Collectors.toList())));
 
-        return dto;
+        Collections.emptyMap();
+
+        dto.put("hits", hits);
+
+
+        /*   dto.put("self", "");
+            dto.put("opponent", "");*/
+
+
+
+
+
+
+
+
+        return  new ResponseEntity<>(dto,HttpStatus.OK);
 
     }
-
 
     private boolean isGuest(Authentication authentication) {
         return authentication == null || authentication instanceof AnonymousAuthenticationToken;
     }
-
-
-
-
-
-
-
-
 
 }
