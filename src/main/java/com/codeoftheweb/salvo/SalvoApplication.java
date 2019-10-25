@@ -360,12 +360,9 @@ public class SalvoApplication {
             scoreRepository.save(scoreAlmeida1);
            // scoreRepository.save(scoreAlmeida2);
             scoreRepository.save(scoreAlmeida3);
-
         };
     }
-
 }
-
 //============ VALIDATION =============================================
 @Configuration
 class WebSecurityConfiguration extends GlobalAuthenticationConfigurerAdapter {
