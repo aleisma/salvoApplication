@@ -34,10 +34,11 @@ public class SalvoController {
         return playerRepository.findByUserName(authentication.getName());
     }
 
-    @RequestMapping("/games")
+    //=================== GAMES ===================================================
+        @RequestMapping("/games")
     public Map<String, Object> getGameAll(Authentication authentication) {
-        Map<String, Object> dto = new LinkedHashMap<String, Object>();
 
+        Map<String, Object> dto = new LinkedHashMap<String, Object>();
         if(isGuest(authentication)){
             dto.put("player", "Guest");
         }
@@ -53,7 +54,43 @@ public class SalvoController {
         return dto;
     }
 
+   //======================== GAME METHOD POST ===========================================
+   @RequestMapping(path = "/games", method = RequestMethod.POST)
+   public ResponseEntity<Object> createGame(Authentication authentication) {
 
+       if (isGuest(authentication)) {
+           return new ResponseEntity<>("NO esta autorizado", HttpStatus.UNAUTHORIZED);
+       }
+
+       Player player  = playerRepository.findByUserName(authentication.getName());
+
+       if(player ==  null){
+           return new ResponseEntity<>("NO esta autorizado", HttpStatus.UNAUTHORIZED);
+       }
+
+       Game game  = gameRepository.save(new Game());
+
+       GamePlayer gamePlayer  = gamePlayerRepository.save(new GamePlayer(player,game));
+
+       return new ResponseEntity<>(makeMap("gpid",gamePlayer.getId()),HttpStatus.CREATED);
+   }
+
+    //======================== GAME METHOD GAME/NN/PLAYERS POST ===========================================
+   /* @RequestMapping(path = "/api/game/nn/players", method = RequestMethod.POST)
+   public  ResponseEntity<Object>findGP(Authentication authentication){
+
+   };*/
+
+
+
+
+
+
+
+
+
+
+    //=================== PLAYERS ===================================================
     @RequestMapping(path = "/players", method = RequestMethod.POST)
     public ResponseEntity<Object> register(
             @RequestParam String email, @RequestParam String password) {
@@ -70,13 +107,7 @@ public class SalvoController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    private Map<String, Object> makeMap(String key, Object value) {
-        Map<String, Object> map = new HashMap<>();
-        map.put(key, value);
-        return map;
-    }
-
-
+    //=================== GAME VIEW ===================================================
     @RequestMapping("/game_view/{nn}")
     public ResponseEntity<Map<String, Object>> getViewGP(@PathVariable Long nn, Authentication  authentication){
 
@@ -134,17 +165,6 @@ public class SalvoController {
 
         dto.put("hits", hits);
 
-
-        /*   dto.put("self", "");
-            dto.put("opponent", "");*/
-
-
-
-
-
-
-
-
         return  new ResponseEntity<>(dto,HttpStatus.OK);
 
     }
@@ -152,5 +172,16 @@ public class SalvoController {
     private boolean isGuest(Authentication authentication) {
         return authentication == null || authentication instanceof AnonymousAuthenticationToken;
     }
+
+
+    private Map<String, Object> makeMap(String key, Object value) {
+        Map<String, Object> map = new HashMap<>();
+        map.put(key,value);
+        return map;
+    }
+
+
+
+
 
 }
