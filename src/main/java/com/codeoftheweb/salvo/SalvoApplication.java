@@ -59,8 +59,8 @@ public class SalvoApplication {
             Game game3 = (new Game((long) 2));
             Game game4 = (new Game((long) 3));
             Game game5 = (new Game((long) 0));
-            Game game6 = (new Game((long) 1));
-            Game game7 = (new Game((long) 2));
+           // Game game6 = (new Game((long) 1));
+           // Game game7 = (new Game((long) 2));
             Game game8 = (new Game((long) 3));
 
             gameRepository.save(game1);
@@ -68,8 +68,8 @@ public class SalvoApplication {
             gameRepository.save(game3);
             gameRepository.save(game4);
             gameRepository.save(game5);
-            gameRepository.save(game6);
-            gameRepository.save(game7);
+          //  gameRepository.save(game6);
+          //  gameRepository.save(game7);
             gameRepository.save(game8);
 
             /* =================== GAMEPLAYER =================== */
@@ -336,7 +336,7 @@ public class SalvoApplication {
 
             //* =================== SCORES ===================
            Score scoreBauer1 = new Score(1.0,bauer, game1 );
-            Score scoreBauer2 = new Score(0.5,bauer, game2 );
+           Score scoreBauer2 = new Score(0.5,bauer, game2 );
           Score scoreBauer3 = new Score(0.5,bauer, game4 );
           Score scoreBauer4 = new Score(0.0 ,bauer, game5 );
 
@@ -346,7 +346,7 @@ public class SalvoApplication {
             Score scoreObrian4 = new Score(0.5,obrian, game4 );
 
           Score scoreAlmeida1 = new Score(0.0,almeida, game3 );
-           Score scoreAlmeida2 = new Score(0.0,almeida, game6 );
+           //Score scoreAlmeida2 = new Score(0.0,almeida, game6 );
           Score scoreAlmeida3 = new Score(0.0,almeida, game3 );
 
             scoreRepository.save(scoreBauer1);
@@ -358,12 +358,10 @@ public class SalvoApplication {
             scoreRepository.save(scoreObrian3);
             scoreRepository.save(scoreObrian4);
             scoreRepository.save(scoreAlmeida1);
-            scoreRepository.save(scoreAlmeida2);
+           // scoreRepository.save(scoreAlmeida2);
             scoreRepository.save(scoreAlmeida3);
 
-
         };
-
     }
 
 }
