@@ -62,11 +62,9 @@ public class Player {
         return userName;
     }
 
-
     public void setUserName(String userName) {
         this.userName = userName;
     }
-
 
     public Set<Score> getScores() {
         return scores;
