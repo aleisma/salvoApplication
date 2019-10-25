@@ -76,20 +76,32 @@ public class SalvoController {
    }
 
     //======================== GAME METHOD GAME/NN/PLAYERS POST ===========================================
-   /* @RequestMapping(path = "/api/game/nn/players", method = RequestMethod.POST)
-   public  ResponseEntity<Object>findGP(Authentication authentication){
 
-   };*/
+  @RequestMapping(path = "/game/{gameID}/players", method = RequestMethod.POST)
+  public ResponseEntity<Map<String, Object>> joinGame(@PathVariable Long gameID, Authentication authentication) {
+    if (isGuest(authentication)){
+      return new ResponseEntity<>(makeMap("error", "You can't join a Game if You're Not Logged In!"), HttpStatus.UNAUTHORIZED);
+    }
 
+    Player  player  = playerRepository.findByUserName(authentication.getName());
+    Game gameToJoin = gameRepository.getOne(gameID);
 
+    if (gameRepository.getOne(gameID) == null) {
+      return new ResponseEntity<>(makeMap("error", "No such game."), HttpStatus.FORBIDDEN);
+    }
 
+    if(player ==  null){
+      return new ResponseEntity<>(makeMap("error", "No such game."), HttpStatus.FORBIDDEN);
+    }
+    long gamePlayersCount = gameToJoin.getGamePlayers().size();
 
-
-
-
-
-
-
+    if (gamePlayersCount == 1) {
+      GamePlayer gameplayer = gamePlayerRepository.save(new GamePlayer( player, gameToJoin));
+      return new ResponseEntity<>(makeMap("gpid", gameplayer.getId()), HttpStatus.CREATED);
+    } else {
+      return new ResponseEntity<>(makeMap("error", "Game is full!"), HttpStatus.FORBIDDEN);
+    }
+  }
     //=================== PLAYERS ===================================================
     @RequestMapping(path = "/players", method = RequestMethod.POST)
     public ResponseEntity<Object> register(
@@ -172,8 +184,7 @@ public class SalvoController {
     private boolean isGuest(Authentication authentication) {
         return authentication == null || authentication instanceof AnonymousAuthenticationToken;
     }
-
-
+    
     private Map<String, Object> makeMap(String key, Object value) {
         Map<String, Object> map = new HashMap<>();
         map.put(key,value);
