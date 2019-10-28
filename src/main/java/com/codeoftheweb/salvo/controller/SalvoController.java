@@ -27,7 +27,8 @@ public class SalvoController {
 
     //=================== GAME VIEW ===================================================
     @RequestMapping("/game_view/{nn}")
-    public ResponseEntity<Map<String, Object>> getViewGP(@PathVariable Long nn, Authentication  authentication){
+    public ResponseEntity<Map<String, Object>> getViewGP(@PathVariable Long nn,
+                                                         Authentication  authentication){
 
         if(isGuest(authentication)){
             return new  ResponseEntity<>(makeMap("ERROR!!","NO PUEDE ACCEDER A ESTA VISTA"),HttpStatus.UNAUTHORIZED);
@@ -38,7 +39,7 @@ public class SalvoController {
         GamePlayer gamePlayer = gamePlayerRepository.findById(nn).orElse(null);
         Game game = gamePlayer.getGames();
 
-        if(player==null){
+        if(player == null){
             return new  ResponseEntity<>(makeMap("ERROR!","PLAYER NO EXISTE"),HttpStatus.UNAUTHORIZED);
         }
 
@@ -86,6 +87,63 @@ public class SalvoController {
         return  new ResponseEntity<>(dto,HttpStatus.OK);
 
     }
+
+    //================== GAMES/PLAYERS/nn/SALVOES ========================================
+    @RequestMapping("/games/players/{gamePlayerId}/salvos")
+    public ResponseEntity<Map<String, Object>> getSalvoes(@PathVariable Long gamePlayerId,
+                                                          Authentication  authentication){
+
+        if (authentication == null || authentication instanceof AnonymousAuthenticationToken) {
+            return new ResponseEntity<>(makeMap("error", "No user logged in"), HttpStatus.UNAUTHORIZED);
+        }
+
+        if (gamePlayerRepository.findById(gamePlayerId) == null) {
+            return new ResponseEntity<>(makeMap("error", "There is no GamePlayer with given ID"),
+                    HttpStatus.UNAUTHORIZED);
+        }
+
+        GamePlayer gamePlayer = gamePlayerRepository.findById(gamePlayerId).get();
+
+        if (!authentication.getName().equals(gamePlayer.getPlayer().getUserName())) {
+            return new ResponseEntity<>(makeMap("error", "The current user is not the GamePlayer the ID" +
+                    "references"),
+                    HttpStatus.UNAUTHORIZED);
+        }
+
+        if (gamePlayer.getSalvoes().size() != 0) {
+            return new ResponseEntity<>(makeMap("error", "\n" + "El jugador tiene Salvos colocados"),
+                    HttpStatus.FORBIDDEN);
+        }
+
+
+
+
+
+
+
+
+       /* ships.forEach( ship -> { ship.setGamePlayer(gamePlayer);
+
+            shipRepository.save(ship);
+
+        }); */
+
+        gamePlayerRepository.save(gamePlayer); //PARA QUE SE ACTUALIZE REPO
+
+
+
+
+        return new ResponseEntity<>(makeMap("OK", "Salvoes added"), HttpStatus.CREATED);
+    }
+
+
+
+
+
+
+
+
+
 
 
     private boolean isGuest(Authentication authentication) {
