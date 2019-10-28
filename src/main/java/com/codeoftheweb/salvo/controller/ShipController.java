@@ -59,14 +59,11 @@ public class ShipController {
         ships.forEach( ship -> { ship.setGamePlayer(gamePlayer);
 
             shipRepository.save(ship);
-
         });
 
         gamePlayerRepository.save(gamePlayer); //PARA QUE SE ACTUALIZE REPO
 
-
         return new ResponseEntity<>(makeMap("OK", "Ships added"), HttpStatus.CREATED);
-
     }
 
     private boolean isGuest(Authentication authentication) {
@@ -80,7 +77,6 @@ public class ShipController {
     }
 
 }
-
 
 
 

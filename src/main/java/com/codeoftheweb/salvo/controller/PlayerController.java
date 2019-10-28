@@ -1,6 +1,5 @@
 package com.codeoftheweb.salvo.controller;
 
-
 import com.codeoftheweb.salvo.model.Player;
 import com.codeoftheweb.salvo.repositories.PlayerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -40,7 +38,6 @@ public class PlayerController {
         playerRepository.save(new Player( email, passwordEncoder.encode(password)));
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
-
 
     private boolean isGuest(Authentication authentication) {
         return authentication == null || authentication instanceof AnonymousAuthenticationToken;

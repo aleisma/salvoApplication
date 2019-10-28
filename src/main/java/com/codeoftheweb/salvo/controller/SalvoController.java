@@ -1,11 +1,13 @@
 package com.codeoftheweb.salvo.controller;
 
 
+import com.codeoftheweb.salvo.model.Salvo;
 import com.codeoftheweb.salvo.repositories.GamePlayerRepository;
 import com.codeoftheweb.salvo.repositories.PlayerRepository;
 import com.codeoftheweb.salvo.model.Game;
 import com.codeoftheweb.salvo.model.GamePlayer;
 import com.codeoftheweb.salvo.model.Player;
+import com.codeoftheweb.salvo.repositories.SalvoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +26,8 @@ public class SalvoController {
     GamePlayerRepository gamePlayerRepository;
     @Autowired
     PlayerRepository playerRepository;
+    @Autowired
+    SalvoRepository salvoRepository;
 
     //=================== GAME VIEW ===================================================
     @RequestMapping("/game_view/{nn}")
@@ -90,8 +94,10 @@ public class SalvoController {
 
     //================== GAMES/PLAYERS/nn/SALVOES ========================================
     @RequestMapping("/games/players/{gamePlayerId}/salvos")
-    public ResponseEntity<Map<String, Object>> getSalvoes(@PathVariable Long gamePlayerId,
-                                                          Authentication  authentication){
+    public ResponseEntity<Map<String, Object>> getSalvoes(@PathVariable long gamePlayerId,
+                                                          Authentication  authentication,
+                                                          @RequestBody Salvo salvo
+                                                          ){
 
         if (authentication == null || authentication instanceof AnonymousAuthenticationToken) {
             return new ResponseEntity<>(makeMap("error", "No user logged in"), HttpStatus.UNAUTHORIZED);
@@ -115,35 +121,11 @@ public class SalvoController {
                     HttpStatus.FORBIDDEN);
         }
 
-
-
-
-
-
-
-
-       /* ships.forEach( ship -> { ship.setGamePlayer(gamePlayer);
-
-            shipRepository.save(ship);
-
-        }); */
-
-        gamePlayerRepository.save(gamePlayer); //PARA QUE SE ACTUALIZE REPO
-
-
-
-
+             salvo.setGamePlayer(gamePlayer);
+        salvoRepository.save(salvo);
+        
         return new ResponseEntity<>(makeMap("OK", "Salvoes added"), HttpStatus.CREATED);
     }
-
-
-
-
-
-
-
-
-
 
 
     private boolean isGuest(Authentication authentication) {
