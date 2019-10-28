@@ -43,6 +43,10 @@ public class GamePlayer {
         this.joinDate = LocalDateTime.now();
     }
 
+    public void addShip(Ship ship) {
+        this.ships.add(ship);
+    }
+
     public Long getId() {
         return id;
     }

@@ -66,8 +66,6 @@ function refreshGameView(_url) {
             // createTable(player1);
             // createTable(player2);
 
-
-
             $('#gameStateBlock').html('<span class="gameStateLabel">TURN: </span><span class="gameStateLabelBig">' + getTurn(gamePlayerData) + '</span><span class="gameStateLabel"> ACTION REQUIRED: </span><span class="gameStateLabelBig">' + gamePlayerData.gameState + '</span>');
 
             console.log("waitState: " + waitState);

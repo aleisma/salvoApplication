@@ -1,5 +1,4 @@
 package com.codeoftheweb.salvo.model;
-import com.codeoftheweb.salvo.model.GamePlayer;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -16,11 +15,9 @@ public class Ship {
     private String type;
     //*===== LIST CREATED SHIP LOCATIONS ==========
     @ElementCollection
-    @Column(name="location")
+    @Column(name="locations")
 
-
-     //CAMBIAR A LOCATION
-    private List<String> shipsLocation;
+    private List<String> locations;
 
     //*===== RELATION 1-N BETWEEN Ship-GamePlayer ==========
     @ManyToOne(fetch = FetchType.EAGER)
@@ -29,10 +26,10 @@ public class Ship {
 
     public Ship(){}
 
-    public Ship(GamePlayer gamePlayer, String type, List<String> shipsLocation) {
+    public Ship(GamePlayer gamePlayer, String type, List<String> locations) {
         this.gamePlayer = gamePlayer;
         this.type = type;
-        this.shipsLocation  = shipsLocation;
+        this.locations  = locations;
     }
 
     public String getType() {
@@ -59,21 +56,19 @@ public class Ship {
         this.id = id;
     }
 
-    public List<String> getShipsLocation() {
-        return shipsLocation;
+    public List<String> getLocations() {
+        return locations;
     }
 
-    public void setShipsLocation(List<String> shipsLocation) {
-        this.shipsLocation = shipsLocation;
+    public void setLocations(List<String> locations) {
+        this.locations = locations;
     }
-
-
 
     //===== MAP Ship-GamePlayer ==========
     public Map<String, Object> getShipDTO() {
         Map<String,Object>  dto= new LinkedHashMap<>();
         dto.put("type", this.type);
-        dto.put("locations", this.shipsLocation);
+        dto.put("locations", this.locations);
         return dto;
     }
 
