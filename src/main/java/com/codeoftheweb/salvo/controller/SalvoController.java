@@ -123,7 +123,7 @@ public class SalvoController {
 
              salvo.setGamePlayer(gamePlayer);
         salvoRepository.save(salvo);
-        
+
         return new ResponseEntity<>(makeMap("OK", "Salvoes added"), HttpStatus.CREATED);
     }
 
