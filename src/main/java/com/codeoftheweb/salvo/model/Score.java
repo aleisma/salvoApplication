@@ -38,6 +38,23 @@ public class Score {
         this.score = score;
     }
 
+    //===== MAP Score==========
+    public Map<String, Object> makeScoreDTO() {
+        Map<String, Object> dto = new LinkedHashMap<>();
+        dto.put("player", this.getPlayer().getId());
+        dto.put("score", this.getScore());
+        dto.put("finishDate",this.getFinishDate());
+        return dto;
+    }
+
+    public Double getScore() {
+        return score;
+    }
+
+    public void setScore(Double score) {
+        this.score = score;
+    }
+
     public Game getGame() {
         return game;
     }
@@ -62,29 +79,12 @@ public class Score {
         this.id = id;
     }
 
-    public Double getScore() {
-        return score;
-    }
-
-    public void setScore(Double score) {
-        this.score = score;
-    }
-
     public LocalDateTime getFinishDate() {
         return finishDate;
     }
 
     public void setFinishDate(LocalDateTime finishDate) {
         this.finishDate = finishDate;
-    }
-
-     //===== MAP Score==========
-    public Map<String, Object> makeScoreDTO() {
-        Map<String, Object> dto = new LinkedHashMap<>();
-        dto.put("player", this.getPlayer().getId());
-        dto.put("score", this.getScore());
-        dto.put("finishDate",this.getFinishDate());
-        return dto;
     }
 
 }

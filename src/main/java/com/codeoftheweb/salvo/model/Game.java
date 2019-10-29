@@ -28,20 +28,18 @@ public class Game {
         this.creationDate = LocalDateTime.now().plusHours(horas);
     }
 
-    public Long getId() {
-        return id;
-    }
+    //===== MAP Game ==========
+    public Map<String, Object> makeGameDTO() {
+        Map<String, Object> dto = new LinkedHashMap<>();
+        dto.put("id", this.getId());
+        dto.put("created", this.getCreationDate());
+        dto.put("gamePlayers", this.getGamePlayers()
+                .stream()
+                .map(gam->gam.makeGamePlayerDTO() )
+                .collect((Collectors.toList())));
+        dto.put("scores",    this.getScores().stream().map(score -> score.makeScoreDTO()).collect(Collectors.toList()));
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public LocalDateTime getCreationDate() {
-        return creationDate;
-    }
-
-    public void setCreationDate(LocalDateTime creationDate) {
-        this.creationDate = creationDate;
+        return dto;
     }
 
     public Set<GamePlayer> getGamePlayers() {
@@ -60,19 +58,20 @@ public class Game {
         this.scores = scores;
     }
 
+    public Long getId() {
+        return id;
+    }
 
-    //===== MAP Game ==========
-    public Map<String, Object> makeGameDTO() {
-        Map<String, Object> dto = new LinkedHashMap<>();
-        dto.put("id", this.getId());
-        dto.put("created", this.getCreationDate());
-        dto.put("gamePlayers", this.getGamePlayers()
-                .stream()
-                .map(gam->gam.makeGamePlayerDTO() )
-                .collect((Collectors.toList())));
-        dto.put("scores",    this.getScores().stream().map(score -> score.makeScoreDTO()).collect(Collectors.toList()));
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-        return dto;
+    public LocalDateTime getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(LocalDateTime creationDate) {
+        this.creationDate = creationDate;
     }
 
 }

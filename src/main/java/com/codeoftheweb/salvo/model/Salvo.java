@@ -19,21 +19,38 @@ public class Salvo {
 
     //*===== LIST CREATED SALVO LOCATIONS ==========
     @ElementCollection
-    @Column(name = "locations ")
-    private List<String> location = new ArrayList<>();
+    @Column(name = "locations")
+    private List<String> locations = new ArrayList<>();
 
     //*===== RELATION 1-N BETWEEN Salvo-GamePlayer ==========
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="gamePlayer_id")
     private GamePlayer gamePlayer;
 
-    public Salvo(int turn, List<String> location, GamePlayer gp){
+    public Salvo(int turn, List<String> locations, GamePlayer gp){
         this.turn = turn;
-        this.location = location;
+        this.locations = locations;
         this.gamePlayer = gp;
     }
 
     public Salvo(){}
+
+    //*===== MAP SALVO-GamePlayer ==================
+    public Map<String, Object> makeSalvoDTO() {
+        Map<String, Object> dto = new LinkedHashMap<>();
+        dto.put("turn", this.getTurn());
+        dto.put("player", this.getId());
+        dto.put("locations", this.getLocations());
+        return dto;
+    }
+
+    public List<String> getLocations() {
+        return locations;
+    }
+
+    public void setLocations(List<String> locations) {
+        this.locations = locations;
+    }
 
     public Long getId() {
         return id;
@@ -51,14 +68,6 @@ public class Salvo {
         this.turn = turn;
     }
 
-    public List<String> getLocation() {
-        return location;
-    }
-
-    public void setLocation(List<String> location) {
-        this.location = location;
-    }
-
     public GamePlayer getGamePlayer() {
         return gamePlayer;
     }
@@ -67,23 +76,4 @@ public class Salvo {
         this.gamePlayer = gamePlayer;
     }
 
-
-    //*===== MAP SALVO-GamePlayer ==================
-    public Map<String, Object> makeSalvoDTO() {
-        Map<String, Object> dto = new LinkedHashMap<>();
-        dto.put("turn", this.getTurn());
-        dto.put("player", this.getId());
-        dto.put("locations", this.getLocation() );
-
-        return dto;
-
-
-
-
-
-
-
-
-
-    }
 }

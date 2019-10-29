@@ -17,9 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
@@ -30,6 +29,70 @@ public class GameController {
     GamePlayerRepository gamePlayerRepository;
     @Autowired
     PlayerRepository playerRepository;
+
+
+    //=================== GAME VIEW ===================================================
+    @RequestMapping("/game_view/{nn}")
+    public ResponseEntity<Map<String, Object>> getViewGP(@PathVariable Long nn,
+                                                         Authentication  authentication){
+
+        if(isGuest(authentication)){
+            return new  ResponseEntity<>(makeMap("ERROR!!","NO PUEDE ACCEDER A ESTA VISTA"),HttpStatus.UNAUTHORIZED);
+        }
+
+        Player  player  = playerRepository.findByUserName(authentication.getName());
+
+        GamePlayer gamePlayer = gamePlayerRepository.findById(nn).orElse(null);
+        Game game = gamePlayer.getGames();
+
+        if(player == null){
+            return new  ResponseEntity<>(makeMap("ERROR!","PLAYER NO EXISTE"),HttpStatus.UNAUTHORIZED);
+        }
+
+        if(gamePlayer == null ){
+            return  new ResponseEntity<>(makeMap("ERROR!"," GP NO EXISTE"), HttpStatus.UNAUTHORIZED);
+
+        }
+
+        if(gamePlayer.getPlayer().getId() !=  player.getId()){
+            return new  ResponseEntity<>(makeMap("ERROR!!","NO PUEDE ACCEDER A ESTA VISTA"),HttpStatus.CONFLICT);
+        }
+
+        Map<String, Object>dto = new LinkedHashMap<String, Object>();
+        dto.put("id", game.getId());
+        dto.put("created", game.getCreationDate());
+
+
+        Map<String, Object> hits = new LinkedHashMap<>();
+        hits.put("self", new ArrayList<>());
+        hits.put("opponent", new ArrayList<>());
+
+        dto.put("gameState", "PLACESHIPS");
+
+        dto.put("gamePlayers", game.getGamePlayers()
+                .stream()
+                .map(gam->gam.makeGamePlayerDTO() )
+                .collect((Collectors.toList())));
+
+        dto.put("ship", gamePlayer.getShips()
+                .stream()
+                .map(ship -> ship.getShipDTO())
+                .collect((Collectors.toList())));
+
+        dto.put("salvoes",gamePlayer.getGame().getGamePlayers()
+                .stream()
+                .flatMap(gamePlayer1 -> gamePlayer1.getSalvoes()
+                        .stream()
+                        .map(salvo -> salvo.makeSalvoDTO()))
+                .collect((Collectors.toList())));
+
+        Collections.emptyMap();
+
+        dto.put("hits", hits);
+
+        return  new ResponseEntity<>(dto,HttpStatus.OK);
+
+    }
 
     //=================== GAMES ===================================================
     @RequestMapping("/games")
@@ -98,14 +161,6 @@ public class GameController {
             return new ResponseEntity<>(makeMap("error", "Game is full!"), HttpStatus.FORBIDDEN);
         }
     }
-
-
-
-
-
-
-
-
 
 
 

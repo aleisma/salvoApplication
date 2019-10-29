@@ -34,20 +34,13 @@ public class Player {
         this.password = password;
 
     }
-    public long getId() {
-        return id;
-    }
 
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
+    //===== MAP Player-GamePlayer ==========
+    public Map<String, Object> makePlayerDTO() {
+        Map<String, Object> dto = new LinkedHashMap<>();
+        dto.put("id", this.getId());
+        dto.put("email", this.getUserName());
+        return dto;
     }
 
     public Set<GamePlayer> getGamePlayers() {
@@ -58,6 +51,21 @@ public class Player {
         this.gamePlayers = gamePlayers;
     }
 
+    public Set<Score> getScores() {
+        return scores;
+    }
+    public void setScores(Set<Score> scores) {
+        this.scores = scores;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     public String getUserName() {
         return userName;
     }
@@ -66,19 +74,12 @@ public class Player {
         this.userName = userName;
     }
 
-    public Set<Score> getScores() {
-        return scores;
-    }
-    public void setScores(Set<Score> scores) {
-        this.scores = scores;
+    public long getId() {
+        return id;
     }
 
-    //===== MAP Player-GamePlayer ==========
-    public Map<String, Object> makePlayerDTO() {
-        Map<String, Object> dto = new LinkedHashMap<>();
-        dto.put("id", this.getId());
-        dto.put("email", this.getUserName());
-        return dto;
+    public void setId(long id) {
+        this.id = id;
     }
 
 }

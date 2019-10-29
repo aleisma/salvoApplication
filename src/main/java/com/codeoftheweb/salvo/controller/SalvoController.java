@@ -25,79 +25,13 @@ public class SalvoController {
     @Autowired
     GamePlayerRepository gamePlayerRepository;
     @Autowired
-    PlayerRepository playerRepository;
-    @Autowired
     SalvoRepository salvoRepository;
-
-    //=================== GAME VIEW ===================================================
-    @RequestMapping("/game_view/{nn}")
-    public ResponseEntity<Map<String, Object>> getViewGP(@PathVariable Long nn,
-                                                         Authentication  authentication){
-
-        if(isGuest(authentication)){
-            return new  ResponseEntity<>(makeMap("ERROR!!","NO PUEDE ACCEDER A ESTA VISTA"),HttpStatus.UNAUTHORIZED);
-        }
-
-        Player  player  = playerRepository.findByUserName(authentication.getName());
-
-        GamePlayer gamePlayer = gamePlayerRepository.findById(nn).orElse(null);
-        Game game = gamePlayer.getGames();
-
-        if(player == null){
-            return new  ResponseEntity<>(makeMap("ERROR!","PLAYER NO EXISTE"),HttpStatus.UNAUTHORIZED);
-        }
-
-        if(gamePlayer == null ){
-            return  new ResponseEntity<>(makeMap("ERROR!"," GP NO EXISTE"), HttpStatus.UNAUTHORIZED);
-
-        }
-
-        if(gamePlayer.getPlayer().getId() !=  player.getId()){
-            return new  ResponseEntity<>(makeMap("ERROR!!","NO PUEDE ACCEDER A ESTA VISTA"),HttpStatus.CONFLICT);
-        }
-
-        Map<String, Object>dto = new LinkedHashMap<String, Object>();
-        dto.put("id", game.getId());
-        dto.put("created", game.getCreationDate());
-
-
-        Map<String, Object> hits = new LinkedHashMap<>();
-        hits.put("self", new ArrayList<>());
-        hits.put("opponent", new ArrayList<>());
-
-        dto.put("gameState", "PLACESHIPS");
-
-        dto.put("gamePlayers", game.getGamePlayers()
-                .stream()
-                .map(gam->gam.makeGamePlayerDTO() )
-                .collect((Collectors.toList())));
-
-        dto.put("ship", gamePlayer.getShips()
-                .stream()
-                .map(ship -> ship.getShipDTO())
-                .collect((Collectors.toList())));
-
-        dto.put("salvoes",gamePlayer.getGame().getGamePlayers()
-                .stream()
-                .flatMap(gamePlayer1 -> gamePlayer1.getSalvoes()
-                        .stream()
-                        .map(salvo -> salvo.makeSalvoDTO()))
-                .collect((Collectors.toList())));
-
-        Collections.emptyMap();
-
-        dto.put("hits", hits);
-
-        return  new ResponseEntity<>(dto,HttpStatus.OK);
-
-    }
 
     //================== GAMES/PLAYERS/nn/SALVOES ========================================
     @RequestMapping("/games/players/{gamePlayerId}/salvos")
     public ResponseEntity<Map<String, Object>> getSalvoes(@PathVariable long gamePlayerId,
                                                           Authentication  authentication,
-                                                          @RequestBody Salvo salvo
-                                                          ){
+                                                          @RequestBody Salvo salvo) {
 
         if (authentication == null || authentication instanceof AnonymousAuthenticationToken) {
             return new ResponseEntity<>(makeMap("error", "No user logged in"), HttpStatus.UNAUTHORIZED);
@@ -122,7 +56,7 @@ public class SalvoController {
         }
 
              salvo.setGamePlayer(gamePlayer);
-        salvoRepository.save(salvo);
+             salvoRepository.save(salvo);
 
         return new ResponseEntity<>(makeMap("OK", "Salvoes added"), HttpStatus.CREATED);
     }
@@ -137,6 +71,5 @@ public class SalvoController {
         map.put(key,value);
         return map;
     }
-
 
 }

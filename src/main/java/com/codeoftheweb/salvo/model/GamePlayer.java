@@ -43,56 +43,13 @@ public class GamePlayer {
         this.joinDate = LocalDateTime.now();
     }
 
-    public void addShip(Ship ship) {
-        this.ships.add(ship);
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public Game getGames() {
-        return game;
-    }
-
-    public void setGames(Game game) {
-        this.game = game;
-    }
-
-    public Player getPlayers() {
-        return player;
-    }
-
-    public void setPlayers(Player player) {
-        this.player = player;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public LocalDateTime getJoinDate() {
-        return joinDate;
-    }
-
-    public void setJoinDate(LocalDateTime joinDate) {
-        this.joinDate = joinDate;
-    }
-
-    public Game getGame() {
-        return game;
-    }
-
-    public void setGame(Game game) {
-        this.game = game;
-    }
-
-    public Player getPlayer() {
-        return player;
-    }
-
-    public void setPlayer(Player player) {
-        this.player = player;
+    //===== MAP Player-GamePlayer ==========
+    public Map<String, Object> makeGamePlayerDTO() {
+        Map<String, Object> dto = new LinkedHashMap<>();
+        dto.put("id", this.getId());
+        dto.put("player", player.makePlayerDTO());  // Tira un error cuando se crea un juego y nose agregan ambos jugadores
+        // Por ese motivo se considero crear solo 10 GamePlayers ya que estaban completos.
+        return dto;
     }
 
     public Set<Ship> getShips() {
@@ -111,16 +68,52 @@ public class GamePlayer {
         this.salvoes = salvoes;
     }
 
-    //===== MAP Player-GamePlayer ==========
-    public Map<String, Object> makeGamePlayerDTO() {
-        Map<String, Object> dto = new LinkedHashMap<>();
-        dto.put("id", this.getId());
-        dto.put("player", player.makePlayerDTO());  // Tira un error cuando se crea un juego y nose agregan ambos jugadores
-                                                    // Por ese motivo se considero crear solo 10 GamePlayers ya que estaban completos.
-        return dto;
+    public void setGames(Game game) {
+        this.game = game;
     }
 
+    public Player getPlayers() {
+        return player;
+    }
 
+    public void setPlayers(Player player) {
+        this.player = player;
+    }
 
+    public void setJoinDate(LocalDateTime joinDate) {
+        this.joinDate = joinDate;
+    }
+
+    public Game getGame() {
+        return game;
+    }
+
+    public void setGame(Game game) {
+        this.game = game;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Game getGames() {
+        return game;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public LocalDateTime getJoinDate() {
+        return joinDate;
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+
+    public void setPlayer(Player player) {
+        this.player = player;
+    }
 
 }
