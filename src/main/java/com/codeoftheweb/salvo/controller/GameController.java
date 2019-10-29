@@ -1,12 +1,13 @@
 package com.codeoftheweb.salvo.controller;
 
-
 import com.codeoftheweb.salvo.model.Game;
 import com.codeoftheweb.salvo.model.GamePlayer;
 import com.codeoftheweb.salvo.model.Player;
+import com.codeoftheweb.salvo.model.Salvo;
 import com.codeoftheweb.salvo.repositories.GamePlayerRepository;
 import com.codeoftheweb.salvo.repositories.GameRepository;
 import com.codeoftheweb.salvo.repositories.PlayerRepository;
+import com.codeoftheweb.salvo.repositories.SalvoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +17,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -29,6 +29,8 @@ public class GameController {
     GamePlayerRepository gamePlayerRepository;
     @Autowired
     PlayerRepository playerRepository;
+    @Autowired
+    SalvoRepository salvoRepository;
 
 
     //=================== GAME VIEW ===================================================
@@ -62,9 +64,10 @@ public class GameController {
         dto.put("id", game.getId());
         dto.put("created", game.getCreationDate());
 
-
         Map<String, Object> hits = new LinkedHashMap<>();
         hits.put("self", new ArrayList<>());
+
+
         hits.put("opponent", new ArrayList<>());
 
         dto.put("gameState", "PLACESHIPS");
@@ -90,10 +93,9 @@ public class GameController {
 
         dto.put("hits", hits);
 
+
         return  new ResponseEntity<>(dto,HttpStatus.OK);
-
     }
-
     //=================== GAMES ===================================================
     @RequestMapping("/games")
     public Map<String, Object> getGameAll(Authentication authentication) {
@@ -162,10 +164,6 @@ public class GameController {
         }
     }
 
-
-
-
-
     private Map<String, Object> makeMap(String key, Object value) {
         Map<String, Object> map = new HashMap<>();
         map.put(key,value);
@@ -174,5 +172,21 @@ public class GameController {
 
     private boolean isGuest(Authentication authentication) {
         return authentication == null || authentication instanceof AnonymousAuthenticationToken;
+
     }
+
+
+    private List<Map<String, Object>> hitsDTO (GamePlayer self, GamePlayer opponent ){
+
+       List<Salvo> = self.getSalvoes();
+
+        List<Map<String, Object>> hitSelfs = new ArrayList<>();
+
+
+
+        return hitSelfs;
+    }
+
+
+
 }
