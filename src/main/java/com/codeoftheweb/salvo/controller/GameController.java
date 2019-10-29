@@ -175,16 +175,18 @@ public class GameController {
 
     }
 
-
+    //============================== HITS DTO ================================================
     private List<Map<String, Object>> hitsDTO (GamePlayer self, GamePlayer opponent ){
 
-       List<Salvo> = self.getSalvoes();
+        Set<Salvo> my_salvoes = self.getSalvoes();
 
-        List<Map<String, Object>> hitSelfs = new ArrayList<>();
+        List<Map<String, Object>> hit_selfs = new ArrayList<>();
 
 
 
-        return hitSelfs;
+
+
+        return hit_selfs;
     }
 
 
