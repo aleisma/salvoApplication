@@ -61,11 +61,12 @@ public class GameController {
         dto.put("id", game.getId());
         dto.put("created", game.getCreationDate());
 
+
         Map<String, Object> hits = new LinkedHashMap<>();
         hits.put("self", new ArrayList<>());
-
-
         hits.put("opponent", new ArrayList<>());
+
+
 
         dto.put("gameState", "PLACESHIPS");
 
@@ -88,16 +89,19 @@ public class GameController {
 
         Collections.emptyMap();
 
-
-        if (gamePlayer.getGame().getGamePlayers().stream().filter(x-> x !=(gamePlayer)).findAny().isPresent())
+        //filtro si hay jugadores en el juego
+        if (gamePlayer.getGame().getGamePlayers().stream().anyMatch(x-> x !=(gamePlayer)))
             {
-                GamePlayer opponent = gamePlayer.getGame().getGamePlayers().stream().filter(x->x != (gamePlayer)).findAny().orElse(null);
+                GamePlayer opponent = gamePlayer.getGame().getGamePlayers().stream().filter(x->x != (gamePlayer)).findAny().get();
+
+                List<Map<String, Object>> hit_self = hitsDTO(opponent, gamePlayer);
+                List<Map<String, Object>> hit_opp = hitsDTO(gamePlayer, opponent);
+                hits.put("self", hit_self);
+                hits.put("opponent", hit_opp);
+
             }
-
-        
-
-
         dto.put("hits", hits);
+
 
 
         return  new ResponseEntity<>(dto,HttpStatus.OK);
@@ -184,29 +188,41 @@ public class GameController {
     //============================== HITS DTO ================================================
     private List<Map<String, Object>> hitsDTO (GamePlayer self, GamePlayer opponent ){
 
-        //Recorro ubicaciones en Salvo for myself.
+        // Obtengo Salvoes for myself.
         Set<Salvo> my_salvoes = self.getSalvoes();
-
-        //Recorro ubicaciones en Ship for myself.
-        Set<Ship> my_ships = self.getShips();
 
         List<Map<String, Object>> hit_selfs = new ArrayList<>();
 
-        // find locations in Salvo.
-        my_salvoes.stream().filter(p->p.getLocations().equals(my_salvoes));
+        for (Salvo salvoes : my_salvoes ) {
+
+         //  if(salvoes.getTurn() < opponent ) {
+
+            List<String> hitLocations = salvoes.getLocations()
+                                               .stream()
+                                               .flatMap(salvo_loc -> opponent.getShips()
+                                                                              .stream()
+                                                                              .flatMap(ship -> ship.getLocations()
+                                                                                                   .stream()
+                                                                                                   .filter(ship_loc_op -> { return ship_loc_op.equals(salvo_loc); })
+                                                                                                 )).collect(Collectors.toList());
+            Map<String, Object> aux_DTO = new LinkedHashMap<>();
+            aux_DTO.put("hitLocations", hitLocations);
+
+            //Calculo los daños a los barcos del oponente (es acumulativo)
+            Map<String, Integer> damages = new LinkedHashMap<>();
+            for (Ship ship : opponent.getShips()) {
+                damages.put(ship.getType() + "Hits", (int) ship.getLocations().stream().
+                        filter(ship_loc -> hitLocations.contains(ship_loc)).count());
 
 
-
-
-
-
-
-
-
+            }
+        }
 
         return hit_selfs;
     }
 
 
-
 }
+
+
+

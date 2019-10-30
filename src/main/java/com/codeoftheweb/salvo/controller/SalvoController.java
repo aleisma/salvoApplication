@@ -50,15 +50,40 @@ public class SalvoController {
                     HttpStatus.UNAUTHORIZED);
         }
 
-        if (gamePlayer.getSalvoes().size() != 0) {
-            return new ResponseEntity<>(makeMap("error", "\n" + "El jugador tiene Salvos colocados"),
-                    HttpStatus.FORBIDDEN);
-        }
+      if(gamePlayer.getSalvoes().isEmpty()){
+          salvo.setTurn(1);
+          salvo.setGamePlayer(gamePlayer);
+          salvoRepository.save(salvo);
+          return new ResponseEntity<>(makeMap("OK", "Turn Set"), HttpStatus.CREATED);
+      }
 
+      //======
+
+        // TIRA ERROR CUANDO INTENTO AGREGAR SALVOES EN EL TURNO 2, PARA EL PLAYER 2, FORBIDDEN; ADEMAS SE DESORDENA EL JSON ========================
+
+      GamePlayer opponent = getOpponent(gamePlayer).orElse(null);
+
+      if(opponent != null){
+          if(gamePlayer.getSalvoes().size() == opponent.getSalvoes().size()  &&  gamePlayer.getId() != opponent.getId() ){
+              salvo.setTurn(gamePlayer.getSalvoes().size()+1);
+              salvo.setGamePlayer(gamePlayer);
+          } else {
+              return new ResponseEntity<>(makeMap("ERROR", "Ya tienes Salvoes en este turno"), HttpStatus.FORBIDDEN); }
+          }
+        else{
+
+              return new ResponseEntity<>(makeMap("ERROR", "NO hay oponente no se puede guardar el salvo"), HttpStatus.FORBIDDEN);
+
+      }
         salvo.setGamePlayer(gamePlayer);
-        salvoRepository.save(salvo);
+          salvoRepository.save(salvo);
 
         return new ResponseEntity<>(makeMap("OK", "Salvoes added"), HttpStatus.CREATED);
+
+        }
+    private Optional <GamePlayer> getOpponent(GamePlayer self){
+
+        return self.getGame().getGamePlayers().stream().filter(gamePlayer -> gamePlayer.getId() != self.getId()).findFirst();
     }
 
     private boolean isGuest(Authentication authentication) {
