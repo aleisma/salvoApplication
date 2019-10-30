@@ -64,7 +64,7 @@ public class SalvoController {
       GamePlayer opponent = getOpponent(gamePlayer).orElse(null);
 
       if(opponent != null){
-          if(gamePlayer.getSalvoes().size() == opponent.getSalvoes().size()  &&  gamePlayer.getId() != opponent.getId() ){
+          if(gamePlayer.getSalvoes().size() == opponent.getSalvoes().size()){
               salvo.setTurn(gamePlayer.getSalvoes().size()+1);
               salvo.setGamePlayer(gamePlayer);
           } else {
