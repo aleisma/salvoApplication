@@ -13,10 +13,7 @@ import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api")
@@ -54,6 +51,9 @@ public class ShipController {
         if (gamePlayer.getShips().size() != 0) {
             return new ResponseEntity<>(makeMap("error", "\n" + "El jugador tiene Salvos colocados"),
                     HttpStatus.FORBIDDEN);
+        }
+        else{
+             System.out.println("ERROR AL AGREGAR SALVO");
         }
 
         ships.forEach( ship -> { ship.setGamePlayer(gamePlayer);

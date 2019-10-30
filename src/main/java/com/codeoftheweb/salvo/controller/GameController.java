@@ -1,9 +1,6 @@
 package com.codeoftheweb.salvo.controller;
 
-import com.codeoftheweb.salvo.model.Game;
-import com.codeoftheweb.salvo.model.GamePlayer;
-import com.codeoftheweb.salvo.model.Player;
-import com.codeoftheweb.salvo.model.Salvo;
+import com.codeoftheweb.salvo.model.*;
 import com.codeoftheweb.salvo.repositories.GamePlayerRepository;
 import com.codeoftheweb.salvo.repositories.GameRepository;
 import com.codeoftheweb.salvo.repositories.PlayerRepository;
@@ -90,6 +87,15 @@ public class GameController {
                 .collect((Collectors.toList())));
 
         Collections.emptyMap();
+
+
+        if (gamePlayer.getGame().getGamePlayers().stream().filter(x-> x !=(gamePlayer)).findAny().isPresent())
+            {
+                GamePlayer opponent = gamePlayer.getGame().getGamePlayers().stream().filter(x->x != (gamePlayer)).findAny().orElse(null);
+            }
+
+        
+
 
         dto.put("hits", hits);
 
@@ -178,9 +184,21 @@ public class GameController {
     //============================== HITS DTO ================================================
     private List<Map<String, Object>> hitsDTO (GamePlayer self, GamePlayer opponent ){
 
+        //Recorro ubicaciones en Salvo for myself.
         Set<Salvo> my_salvoes = self.getSalvoes();
 
+        //Recorro ubicaciones en Ship for myself.
+        Set<Ship> my_ships = self.getShips();
+
         List<Map<String, Object>> hit_selfs = new ArrayList<>();
+
+        // find locations in Salvo.
+        my_salvoes.stream().filter(p->p.getLocations().equals(my_salvoes));
+
+
+
+
+
 
 
 

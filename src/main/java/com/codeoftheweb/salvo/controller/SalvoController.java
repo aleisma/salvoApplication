@@ -55,12 +55,11 @@ public class SalvoController {
                     HttpStatus.FORBIDDEN);
         }
 
-             salvo.setGamePlayer(gamePlayer);
-             salvoRepository.save(salvo);
+        salvo.setGamePlayer(gamePlayer);
+        salvoRepository.save(salvo);
 
         return new ResponseEntity<>(makeMap("OK", "Salvoes added"), HttpStatus.CREATED);
     }
-
 
     private boolean isGuest(Authentication authentication) {
         return authentication == null || authentication instanceof AnonymousAuthenticationToken;
@@ -71,8 +70,5 @@ public class SalvoController {
         map.put(key,value);
         return map;
     }
-
-
-
 
 }
