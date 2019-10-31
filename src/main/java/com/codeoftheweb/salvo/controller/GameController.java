@@ -1,10 +1,7 @@
 package com.codeoftheweb.salvo.controller;
 
 import com.codeoftheweb.salvo.model.*;
-import com.codeoftheweb.salvo.repositories.GamePlayerRepository;
-import com.codeoftheweb.salvo.repositories.GameRepository;
-import com.codeoftheweb.salvo.repositories.PlayerRepository;
-import com.codeoftheweb.salvo.repositories.SalvoRepository;
+import com.codeoftheweb.salvo.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,10 +27,17 @@ public class GameController {
     SalvoRepository salvoRepository;
 
 
+
     //=================== GAME VIEW ===================================================
     @RequestMapping("/game_view/{nn}")
     public ResponseEntity<Map<String, Object>> getViewGP(@PathVariable Long nn,
                                                          Authentication  authentication){
+
+        GamePlayer gamePlayer = gamePlayerRepository.findById(nn).orElse(null);
+
+        if(gamePlayer == null ){
+            return new  ResponseEntity<>(makeMap("ERROR!","EL GAMEPLAYER NO EXISTE"),HttpStatus.UNAUTHORIZED);
+        }
 
         if(isGuest(authentication)){
             return new  ResponseEntity<>(makeMap("ERROR!!","NO PUEDE ACCEDER A ESTA VISTA"),HttpStatus.UNAUTHORIZED);
@@ -41,7 +45,6 @@ public class GameController {
 
         Player  player  = playerRepository.findByUserName(authentication.getName());
 
-        GamePlayer gamePlayer = gamePlayerRepository.findById(nn).orElse(null);
         Game game = gamePlayer.getGames();
 
         if(player == null){
@@ -50,7 +53,6 @@ public class GameController {
 
         if(gamePlayer == null ){
             return  new ResponseEntity<>(makeMap("ERROR!"," GP NO EXISTE"), HttpStatus.UNAUTHORIZED);
-
         }
 
         if(gamePlayer.getPlayer().getId() !=  player.getId()){
@@ -67,8 +69,7 @@ public class GameController {
         hits.put("opponent", new ArrayList<>());
 
 
-
-        dto.put("gameState", "PLACESHIPS");
+        dto.put("gameState", GameState.PLACESHIPS);
 
         dto.put("gamePlayers", game.getGamePlayers()
                 .stream()
@@ -89,7 +90,7 @@ public class GameController {
 
         Collections.emptyMap();
 
-        //filtro si hay jugadores en el juego
+        //filtro si hay gameplayers en el juego
         if (gamePlayer.getGame().getGamePlayers().stream().anyMatch(x-> x !=(gamePlayer)))
             {
                 GamePlayer opponent = gamePlayer.getGame().getGamePlayers().stream().filter(x->x != (gamePlayer)).findAny().get();
@@ -101,8 +102,6 @@ public class GameController {
 
             }
         dto.put("hits", hits);
-
-
 
         return  new ResponseEntity<>(dto,HttpStatus.OK);
     }
@@ -184,7 +183,6 @@ public class GameController {
         return authentication == null || authentication instanceof AnonymousAuthenticationToken;
 
     }
-
     //============================== HITS DTO ================================================
     private List<Map<String, Object>> hitsDTO (GamePlayer self, GamePlayer opponent ){
 
@@ -195,34 +193,48 @@ public class GameController {
 
         for (Salvo salvoes : my_salvoes ) {
 
-         //  if(salvoes.getTurn() < opponent ) {
+         if( salvoes.getTurn() != 0 ) { //si los turnos estan finalizados
 
-            List<String> hitLocations = salvoes.getLocations()
+            List<String> hitLocations = salvoes.getLocations()  // Obtengo las locations
                                                .stream()
-                                               .flatMap(salvo_loc -> opponent.getShips()
+                                               .flatMap(salvo_loc ->  opponent.getShips()  //obtengo ships del oponente
                                                                               .stream()
-                                                                              .flatMap(ship -> ship.getLocations()
+                                                                              .flatMap(ship -> ship.getLocations() // ship locations del oponente
                                                                                                    .stream()
-                                                                                                   .filter(ship_loc_op -> { return ship_loc_op.equals(salvo_loc); })
-                                                                                                 )).collect(Collectors.toList());
+                                                                                                   .filter(ship_loc_op -> { return ship_loc_op.equals(salvo_loc); }))) // filtro las ship locations
+                                                                                                   .collect(Collectors.toList());
             Map<String, Object> aux_DTO = new LinkedHashMap<>();
             aux_DTO.put("hitLocations", hitLocations);
 
-            //Calculo los daños a los barcos del oponente (es acumulativo)
-            Map<String, Integer> damages = new LinkedHashMap<>();
-            for (Ship ship : opponent.getShips()) {
-                damages.put(ship.getType() + "Hits", (int) ship.getLocations().stream().
-                        filter(ship_loc -> hitLocations.contains(ship_loc)).count());
-
-
-            }
         }
 
+    }
         return hit_selfs;
     }
 
 
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+} // class GameController
+
+
+
+
+
 
 
 

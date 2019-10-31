@@ -81,6 +81,8 @@ public class SalvoController {
         return new ResponseEntity<>(makeMap("OK", "Salvoes added"), HttpStatus.CREATED);
 
         }
+
+        // Obtengo el player opponent
     private Optional <GamePlayer> getOpponent(GamePlayer self){
 
         return self.getGame().getGamePlayers().stream().filter(gamePlayer -> gamePlayer.getId() != self.getId()).findFirst();
