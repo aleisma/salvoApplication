@@ -24,86 +24,8 @@ public class GameController {
     @Autowired
     PlayerRepository playerRepository;
 
-   /* //=================== GAME VIEW ===================================================
-    @RequestMapping("/game_view/{nn}")
-    public ResponseEntity<Map<String, Object>> getViewGP(@PathVariable Long nn,
-                                                         Authentication  authentication){
-
-        GamePlayer gamePlayer = gamePlayerRepository.findById(nn).orElse(null);
-
-        if(gamePlayer == null ){
-            return new  ResponseEntity<>(makeMap("ERROR!","EL GAMEPLAYER NO EXISTE"),HttpStatus.UNAUTHORIZED);
-        }
-
-        if(isGuest(authentication)){
-            return new  ResponseEntity<>(makeMap("ERROR!!","NO PUEDE ACCEDER A ESTA VISTA"),HttpStatus.UNAUTHORIZED);
-        }
-
-        Player  player  = playerRepository.findByUserName(authentication.getName());
-
-        Game game = gamePlayer.getGames();
-
-        if(player == null){
-            return new  ResponseEntity<>(makeMap("ERROR!","PLAYER NO EXISTE"),HttpStatus.UNAUTHORIZED);
-        }
-
-        if(gamePlayer == null ){
-            return  new ResponseEntity<>(makeMap("ERROR!"," GP NO EXISTE"), HttpStatus.UNAUTHORIZED);
-        }
-
-        if(gamePlayer.getPlayer().getId() !=  player.getId()){
-            return new  ResponseEntity<>(makeMap("ERROR!!","NO PUEDE ACCEDER A ESTA VISTA"),HttpStatus.CONFLICT);
-        }
-
-      /*  Map<String, Object>dto = new LinkedHashMap<String, Object>();
-        dto.put("id", game.getId());
-        dto.put("created", game.getCreationDate());
-
-
-        Map<String, Object> hits = new LinkedHashMap<>();
-        hits.put("self", new ArrayList<>());
-        hits.put("opponent", new ArrayList<>());
-
-        dto.put("gameState", GameState.PLACESHIPS);
-
-        dto.put("gamePlayers", game.getGamePlayers()
-                .stream()
-                .map(gam->gam.makeGamePlayerDTO() )
-                .collect((Collectors.toList())));
-
-        dto.put("ship", gamePlayer.getShips()
-                .stream()
-                .map(ship -> ship.getShipDTO())
-                .collect((Collectors.toList())));
-
-        dto.put("salvoes",gamePlayer.getGame().getGamePlayers()
-                .stream()
-                .flatMap(gamePlayer1 -> gamePlayer1.getSalvoes()
-                        .stream()
-                        .map(salvo -> salvo.makeSalvoDTO()))
-                .collect((Collectors.toList())));
-
-        //filtro si hay gameplayers en el juego
-        if (gamePlayer.getGame().getGamePlayers().stream().anyMatch(x-> x !=(gamePlayer)))
-            {
-                GamePlayer opponent = gamePlayer.getGame().getGamePlayers().stream().filter(x->x != (gamePlayer)).findAny().get();
-
-                List<Map<String, Object>> hit_self = hitsDTO(opponent, gamePlayer);
-                List<Map<String, Object>> hit_opp = hitsDTO(gamePlayer, opponent);
-                hits.put("self", hit_self);
-                hits.put("opponent", hit_opp);
-
-            }
-        dto.put("hits", hits);*/
-
-        //Collections.emptyMap();
-
-       // return  new ResponseEntity<>(HttpStatus.OK);
-    // }
-
-
-    // ================================ TESTING ===================================================
-    @RequestMapping(value = "/game_view/{gamePlayerId}", method = RequestMethod.GET)
+    // ================================ TESTING ========================================================================
+    @RequestMapping(value = "/game_view/{gamePlayerId}")
     public ResponseEntity<Map<String, Object>> findGamePlayerView(@PathVariable long gamePlayerId,
                                                                   Authentication authentication) {
 
@@ -137,7 +59,7 @@ public class GameController {
 
     }
 
- // =============================== GAME VIEW DTO ==============================================
+ // =============================== GAME VIEW DTO ======================================================================
     private  Map<String, Object> gameViewDTO (GamePlayer gamePlayer ){
 
         Game game = gamePlayer.getGames();
@@ -186,7 +108,7 @@ public class GameController {
         return  dto;
     }
 
-    //============================== HITS DTO ============================================================
+    //============================== HITS DTO ==========================================================================
     private List<Map<String, Object>> hitsDTO (GamePlayer self, GamePlayer opponent ){
 
         // Obtengo Salvoes for myself.
@@ -203,17 +125,19 @@ public class GameController {
                         .flatMap(salvo_loc ->  opponent.getShips()  //obtengo ships del oponente
                                 .stream()
                                 .flatMap(ship -> ship.getLocations() // ship locations del oponente
-                                        .stream()
-                                        .filter(ship_loc_op -> { return ship_loc_op.equals(salvo_loc); }))) // filtro las ship locations
-                        .collect(Collectors.toList());
+                                                     .stream()
+                                                     .filter(ship_loc_op -> { return ship_loc_op.equals(salvo_loc); }))) // filtro las ship locations
+                                .collect(Collectors.toList());
+
                 Map<String, Object> aux_DTO = new LinkedHashMap<>();
+
                 aux_DTO.put("hitLocations", hitLocations);
             }
         }
         return hit_selfs;
     }
 
-    //=================== GAMES ===========================================================================
+    //=================== GAMES ========================================================================================
     @RequestMapping("/games")
     public Map<String, Object> getGameAll(Authentication authentication) {
 
@@ -233,7 +157,7 @@ public class GameController {
         return dto;
     }
 
-    //======================== GAME METHOD POST ===========================================================
+    //======================== GAME METHOD POST ========================================================================
     @RequestMapping(path = "/games", method = RequestMethod.POST)
     public ResponseEntity<Object> createGame(Authentication authentication) {
 
@@ -254,7 +178,7 @@ public class GameController {
         return new ResponseEntity<>(makeMap("gpid",gamePlayer.getId()),HttpStatus.CREATED);
     }
 
-    //======================== GAME METHOD GAME/NN/PLAYERS POST ===========================================
+    //======================== GAME METHOD POST GAME/NN/PLAYERS ========================================================
     @RequestMapping(path = "/game/{gameID}/players", method = RequestMethod.POST)
     public ResponseEntity<Map<String, Object>> joinGame(@PathVariable Long gameID, Authentication authentication) {
         if (isGuest(authentication)){
@@ -281,6 +205,7 @@ public class GameController {
         }
     }
 
+    //============================= MAKE MAP AUX =======================================================================
     private Map<String, Object> makeMap(String key, Object value) {
         Map<String, Object> map = new HashMap<>();
         map.put(key,value);
@@ -293,7 +218,7 @@ public class GameController {
     }
 
 
-} // class GameController
+}
 
 
 
