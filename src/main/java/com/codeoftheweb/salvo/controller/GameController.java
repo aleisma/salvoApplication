@@ -23,12 +23,8 @@ public class GameController {
     GamePlayerRepository gamePlayerRepository;
     @Autowired
     PlayerRepository playerRepository;
-    @Autowired
-    SalvoRepository salvoRepository;
 
-
-
-    //=================== GAME VIEW ===================================================
+   /* //=================== GAME VIEW ===================================================
     @RequestMapping("/game_view/{nn}")
     public ResponseEntity<Map<String, Object>> getViewGP(@PathVariable Long nn,
                                                          Authentication  authentication){
@@ -59,7 +55,7 @@ public class GameController {
             return new  ResponseEntity<>(makeMap("ERROR!!","NO PUEDE ACCEDER A ESTA VISTA"),HttpStatus.CONFLICT);
         }
 
-        Map<String, Object>dto = new LinkedHashMap<String, Object>();
+      /*  Map<String, Object>dto = new LinkedHashMap<String, Object>();
         dto.put("id", game.getId());
         dto.put("created", game.getCreationDate());
 
@@ -67,7 +63,6 @@ public class GameController {
         Map<String, Object> hits = new LinkedHashMap<>();
         hits.put("self", new ArrayList<>());
         hits.put("opponent", new ArrayList<>());
-
 
         dto.put("gameState", GameState.PLACESHIPS);
 
@@ -88,8 +83,6 @@ public class GameController {
                         .map(salvo -> salvo.makeSalvoDTO()))
                 .collect((Collectors.toList())));
 
-        Collections.emptyMap();
-
         //filtro si hay gameplayers en el juego
         if (gamePlayer.getGame().getGamePlayers().stream().anyMatch(x-> x !=(gamePlayer)))
             {
@@ -101,11 +94,126 @@ public class GameController {
                 hits.put("opponent", hit_opp);
 
             }
+        dto.put("hits", hits);*/
+
+        //Collections.emptyMap();
+
+       // return  new ResponseEntity<>(HttpStatus.OK);
+    // }
+
+
+    // ================================ TESTING ===================================================
+    @RequestMapping(value = "/game_view/{gamePlayerId}", method = RequestMethod.GET)
+    public ResponseEntity<Map<String, Object>> findGamePlayerView(@PathVariable long gamePlayerId,
+                                                                  Authentication authentication) {
+
+        GamePlayer gamePlayer = gamePlayerRepository.findById(gamePlayerId).orElse(null);
+
+        if(gamePlayer == null ){
+            return new  ResponseEntity<>(makeMap("ERROR!","EL GAMEPLAYER NO EXISTE"),HttpStatus.UNAUTHORIZED);
+        }
+
+        if(isGuest(authentication)){
+            return new  ResponseEntity<>(makeMap("ERROR!!","NO PUEDE ACCEDER A ESTA VISTA"),HttpStatus.UNAUTHORIZED);
+        }
+
+        Player  player  = playerRepository.findByUserName(authentication.getName());
+
+        Game game = gamePlayer.getGames();
+
+        if(player == null){
+            return new  ResponseEntity<>(makeMap("ERROR!","PLAYER NO EXISTE"),HttpStatus.UNAUTHORIZED);
+        }
+
+        if(gamePlayer == null ){
+            return  new ResponseEntity<>(makeMap("ERROR!"," GP NO EXISTE"), HttpStatus.UNAUTHORIZED);
+        }
+
+        if(gamePlayer.getPlayer().getId() !=  player.getId()){
+            return new  ResponseEntity<>(makeMap("ERROR!!","NO PUEDE ACCEDER A ESTA VISTA"),HttpStatus.CONFLICT);
+        }
+
+        return new ResponseEntity<>(gameViewDTO(gamePlayer), HttpStatus.OK);
+
+    }
+
+ // =============================== GAME VIEW DTO ==============================================
+    private  Map<String, Object> gameViewDTO (GamePlayer gamePlayer ){
+
+        Game game = gamePlayer.getGames();
+
+        Map<String, Object>dto = new LinkedHashMap<String, Object>();
+        dto.put("id", game.getId());
+        dto.put("created", game.getCreationDate());
+
+
+        Map<String, Object> hits = new LinkedHashMap<>();
+        hits.put("self", new ArrayList<>());
+        hits.put("opponent", new ArrayList<>());
+
+        dto.put("gameState", GameState.PLACESHIPS);
+
+        dto.put("gamePlayers", game.getGamePlayers()
+                .stream()
+                .map(gam->gam.makeGamePlayerDTO() )
+                .collect((Collectors.toList())));
+
+        dto.put("ship", gamePlayer.getShips()
+                .stream()
+                .map(ship -> ship.getShipDTO())
+                .collect((Collectors.toList())));
+
+        dto.put("salvoes",gamePlayer.getGame().getGamePlayers()
+                .stream()
+                .flatMap(gamePlayer1 -> gamePlayer1.getSalvoes()
+                        .stream()
+                        .map(salvo -> salvo.makeSalvoDTO()))
+                .collect((Collectors.toList())));
+
+
+        //filtro si hay gameplayers en el juego
+        if (gamePlayer.getGame().getGamePlayers().stream().anyMatch(x-> x !=(gamePlayer)))
+        {
+            GamePlayer opponent = gamePlayer.getGame().getGamePlayers().stream().filter(x->x != (gamePlayer)).findAny().get();
+
+            List<Map<String, Object>> hit_self = hitsDTO(opponent, gamePlayer);
+            List<Map<String, Object>> hit_opp = hitsDTO(gamePlayer, opponent);
+            hits.put("self", hit_self);
+            hits.put("opponent", hit_opp);
+        }
         dto.put("hits", hits);
 
-        return  new ResponseEntity<>(dto,HttpStatus.OK);
+        return  dto;
     }
-    //=================== GAMES ===================================================
+
+    //============================== HITS DTO ============================================================
+    private List<Map<String, Object>> hitsDTO (GamePlayer self, GamePlayer opponent ){
+
+        // Obtengo Salvoes for myself.
+        Set<Salvo> my_salvoes = self.getSalvoes();
+
+        List<Map<String, Object>> hit_selfs = new ArrayList<>();
+
+        for (Salvo salvoes : my_salvoes ) {
+
+            if( salvoes.getTurn() != 0 ) { //si los turnos estan finalizados
+
+                List<String> hitLocations = salvoes.getLocations()  // Obtengo las locations
+                        .stream()
+                        .flatMap(salvo_loc ->  opponent.getShips()  //obtengo ships del oponente
+                                .stream()
+                                .flatMap(ship -> ship.getLocations() // ship locations del oponente
+                                        .stream()
+                                        .filter(ship_loc_op -> { return ship_loc_op.equals(salvo_loc); }))) // filtro las ship locations
+                        .collect(Collectors.toList());
+                Map<String, Object> aux_DTO = new LinkedHashMap<>();
+                aux_DTO.put("hitLocations", hitLocations);
+            }
+        }
+        return hit_selfs;
+    }
+
+    //=================== GAMES ===========================================================================
     @RequestMapping("/games")
     public Map<String, Object> getGameAll(Authentication authentication) {
 
@@ -125,7 +233,7 @@ public class GameController {
         return dto;
     }
 
-    //======================== GAME METHOD POST ===========================================
+    //======================== GAME METHOD POST ===========================================================
     @RequestMapping(path = "/games", method = RequestMethod.POST)
     public ResponseEntity<Object> createGame(Authentication authentication) {
 
@@ -183,50 +291,6 @@ public class GameController {
         return authentication == null || authentication instanceof AnonymousAuthenticationToken;
 
     }
-    //============================== HITS DTO ================================================
-    private List<Map<String, Object>> hitsDTO (GamePlayer self, GamePlayer opponent ){
-
-        // Obtengo Salvoes for myself.
-        Set<Salvo> my_salvoes = self.getSalvoes();
-
-        List<Map<String, Object>> hit_selfs = new ArrayList<>();
-
-        for (Salvo salvoes : my_salvoes ) {
-
-         if( salvoes.getTurn() != 0 ) { //si los turnos estan finalizados
-
-            List<String> hitLocations = salvoes.getLocations()  // Obtengo las locations
-                                               .stream()
-                                               .flatMap(salvo_loc ->  opponent.getShips()  //obtengo ships del oponente
-                                                                              .stream()
-                                                                              .flatMap(ship -> ship.getLocations() // ship locations del oponente
-                                                                                                   .stream()
-                                                                                                   .filter(ship_loc_op -> { return ship_loc_op.equals(salvo_loc); }))) // filtro las ship locations
-                                                                                                   .collect(Collectors.toList());
-            Map<String, Object> aux_DTO = new LinkedHashMap<>();
-            aux_DTO.put("hitLocations", hitLocations);
-
-        }
-
-    }
-        return hit_selfs;
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 } // class GameController
