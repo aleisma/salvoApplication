@@ -16,6 +16,7 @@ public class GamePlayer {
     private LocalDateTime joinDate;
 
 
+
     //*===== RELATION 1-N BETWEEN Game-GamePlayer ==========
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="game_id")
@@ -35,6 +36,11 @@ public class GamePlayer {
     Set<Salvo> salvoes;
 
     public GamePlayer(){
+        
+        // instancias para que no se rompa el gameview cuando no hay 2 GamePlayers.
+        ships = new HashSet<>();
+        salvoes = new HashSet<>();
+
     }
 
     public GamePlayer(Player player,Game game ){
