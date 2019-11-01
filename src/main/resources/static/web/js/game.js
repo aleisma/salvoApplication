@@ -199,17 +199,17 @@ function showSelf (gamePlayerData) {
     $('#OpponentPlayerName').text(viewer);
 
 
-    gamePlayerData.ship.forEach(function(ship) {
+    gamePlayerData.ships.forEach(function(ships) {
 
         let firstCellID;
-        firstCellID = "#p1_" + ship.locations[0];
-        if (ship.locations[0].substring(1) === ship.locations[1].substring(1)) {
-            $(firstCellID).html('<img class="shipsImgOnSelfGridVer" src="img/' + ship.type + 'ver.png">');
+        firstCellID = "#p1_" + ships.locations[0];
+        if (ships.locations[0].substring(1) === ships.locations[1].substring(1)) {
+            $(firstCellID).html('<img class="shipsImgOnSelfGridVer" src="img/' + ships.type + 'ver.png">');
                 } else {
-            $(firstCellID).html('<img class="shipsImgOnSelfGridHor" src="img/' + ship.type + 'hor.png">');
+            $(firstCellID).html('<img class="shipsImgOnSelfGridHor" src="img/' + ships.type + 'hor.png">');
         }
         // console.log(ship.type);
-        ship.locations.forEach(function(location) {
+        ships.locations.forEach(function(location) {
             var cellID = "#p1_" + location;
             $(cellID).addClass("shipCell");
        //     console.log(location);
