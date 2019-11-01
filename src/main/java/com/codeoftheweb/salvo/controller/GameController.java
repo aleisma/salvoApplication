@@ -51,10 +51,6 @@ public class GameController {
             return  new ResponseEntity<>(makeMap("ERROR!"," GP NO EXISTE"), HttpStatus.UNAUTHORIZED);
         }
 
-    /*   if( gamePlayer.getPlayer().gamePlayers.size() == 1){
-            return new ResponseEntity<>(makeMap(), HttpStatus.OK);
-        } */
-
         if(gamePlayer.getPlayer().getId() !=  player.getId()){
             return new  ResponseEntity<>(makeMap("ERROR!!","NO PUEDE ACCEDER A ESTA VISTA"),HttpStatus.CONFLICT);
         }
@@ -81,30 +77,10 @@ public class GameController {
         return dto;
     }
 
-    //====================== MAKE GP ==================================================================================/
-    private List<Map> makeGamePlayer(Set<GamePlayer> set) {
-
-        return set.stream().map(gamePlayer -> gamePlayer.makeGamePlayerDTO()).collect((Collectors.toList()));
-    }
-
-    //====================== MAKE SHIPS ===============================================================================/
-    private List<Map> makeShips(Set<Ship> ships) {
-
-        return ships.stream().map(ship -> ship.getShipDTO()).collect((Collectors.toList()));
-    }
-
-    //====================== MAKE SALVOS ==============================================================================/
-    private List<Map> makeSalvos(Set<GamePlayer> gp) {
-
-        Stream<Salvo> ss = gp.stream().flatMap(g -> g.getSalvoes() .stream());
-
-        return ss.map(salvo -> salvo.makeSalvoDTO()).collect((Collectors.toList()));
-    }
-
     //====================== HITS DTO =================================================================================/
     private Map<String, Object> hitsDTO(GamePlayer gamePlayer1) {
         Map<String, Object> mapa = new HashMap<>();
-        //Chequear si hay GamePlayer2
+        // CHECK si hay GamePlayer2
         if (gamePlayer1.getGame().getGamePlayers().size() == 2) {
             GamePlayer gamePlayer2 = new GamePlayer();
             for (GamePlayer gamePlayer : gamePlayer1.getGame().getGamePlayers()) {
@@ -130,15 +106,16 @@ public class GameController {
             if( gamePlayer2 == null)
             {
                 Map<String, Object> mapa = new LinkedHashMap<>();
-                mapa.put("self", "" );
-                mapa.put("opponent", "");
-                mapa.put("id", gamePlayer1.getGame().getId());
 
+                mapa.put("id", gamePlayer1.getGame().getId());
                 mapa.put("created", gamePlayer1.getGame().getCreationDate());
                 mapa.put("gamePlayers", makeGamePlayer(gamePlayer1.getGame().getGamePlayers()));
                 mapa.put("ships", makeShips(gamePlayer1.getShips()));
                 mapa.put("salvoes", makeSalvos(gamePlayer1.getGame().getGamePlayers()));
-                mapa.put("gameState", GameState.WAITING_FOR_OPPONENT);
+                mapa.put("gameState", GameState.PLACESHIPS);
+
+                mapa.put("self", "" );
+                mapa.put("opponent", "");
 
                Collections.emptyMap();
             }
@@ -224,6 +201,27 @@ public class GameController {
 
         return mapList;
     }
+
+    //====================== MAKE GP ==================================================================================/
+    private List<Map> makeGamePlayer(Set<GamePlayer> set) {
+
+        return set.stream().map(gamePlayer -> gamePlayer.makeGamePlayerDTO()).collect((Collectors.toList()));
+    }
+
+    //====================== MAKE SHIPS ===============================================================================/
+    private List<Map> makeShips(Set<Ship> ships) {
+
+        return ships.stream().map(ship -> ship.getShipDTO()).collect((Collectors.toList()));
+    }
+
+    //====================== MAKE SALVOS ==============================================================================/
+    private List<Map> makeSalvos(Set<GamePlayer> gp) {
+
+        Stream<Salvo> ss = gp.stream().flatMap(g -> g.getSalvoes() .stream());
+
+        return ss.map(salvo -> salvo.makeSalvoDTO()).collect((Collectors.toList()));
+    }
+
 
     //====================== ALL GAMES =====================================================//////
     @RequestMapping("/games")
