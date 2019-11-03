@@ -15,7 +15,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-
 @RestController
 @RequestMapping("/api")
 public class GameController {
@@ -71,7 +70,7 @@ public class GameController {
         dto.put("created", gp.getGame().getCreationDate());
         dto.put("gamePlayers", makeGamePlayer(gp.getGame().getGamePlayers()));
         dto.put("ships", makeShips(gp.getShips()));
-        dto.put("salvoes", makeSalvos(gp.getGame().getGamePlayers()));//ya le paso el stream completed de salvos del game*/
+        dto.put("salvoes", makeSalvos(gp.getGame().getGamePlayers()));//ya le paso el stream complete de salvos  game =/
         dto.put("hits", hitsDTO(gp));
         dto.put("gameState", GameState.PLACESHIPS);
         return dto;
@@ -103,7 +102,8 @@ public class GameController {
 
         Set<Salvo> gp2salvos = gamePlayer2.getSalvoes();
 
-            if( gamePlayer2 == null)
+
+            if( gamePlayer2 == null) // evito null pointer Exception
             {
                 Map<String, Object> mapa = new LinkedHashMap<>();
 
@@ -113,7 +113,6 @@ public class GameController {
                 mapa.put("ships", makeShips(gamePlayer1.getShips()));
                 mapa.put("salvoes", makeSalvos(gamePlayer1.getGame().getGamePlayers()));
                 mapa.put("gameState", GameState.PLACESHIPS);
-
                 mapa.put("self", "" );
                 mapa.put("opponent", "");
 
@@ -122,9 +121,8 @@ public class GameController {
 
       else  {
             // Ordeno para que se muestren bien los turnos
-            List<Salvo> OrderedSalvoes = gp2salvos.stream().sorted(Comparator
-                    .comparing(salvo -> salvo.getTurn()))
-                    .collect((Collectors.toList()));
+            List<Salvo> OrderedSalvoes = gp2salvos.stream().sorted(Comparator.comparing(salvo -> salvo.getTurn()))
+                                                           .collect((Collectors.toList()));
             int carrier = 0;
             int battleship = 0;
             int submarine = 0;
@@ -151,23 +149,23 @@ public class GameController {
                                 hit = true;
                                 hitLocations.add(salvoLocation);
                                 switch (ship.getType()) {
-                                    case "CARRIER":
+                                    case "carrier":
                                         carrierHits++;
                                         carrier++;
                                         break;
-                                    case "BATTLESHIP":
+                                    case "battleship":
                                         battleship++;
                                         battleshipHits++;
                                         break;
-                                    case "SUBMARINE":
+                                    case "submarine":
                                         submarine++;
                                         submarineHits++;
                                         break;
-                                    case "DESTROYER":
+                                    case "destroyer":
                                         destroyer++;
                                         destroyerHits++;
                                         break;
-                                    case "PATROLBOAT":
+                                    case "patrolboat":
                                         patrolboat++;
                                         patrolboatHits++;
                                         break;
@@ -184,11 +182,11 @@ public class GameController {
                 damagesMap.put("submarineHits", submarineHits);
                 damagesMap.put("destroyerHits", destroyerHits);
                 damagesMap.put("patrolboatHits", patrolboatHits);
-                damagesMap.put("CARRIER", carrier);
-                damagesMap.put("BATTLESHIP", battleship);
-                damagesMap.put("SUBMARINE", submarine);
-                damagesMap.put("DESTROYER", destroyer);
-                damagesMap.put("PATROLBOAT", patrolboat);
+                damagesMap.put("carrier", carrier);
+                damagesMap.put("battleship", battleship);
+                damagesMap.put("submarine", submarine);
+                damagesMap.put("destroyer", destroyer);
+                damagesMap.put("patrolboat", patrolboat);
 
                 mapa.put("hitLocations", hitLocations);
                 mapa.put("damages", damagesMap);
@@ -197,7 +195,6 @@ public class GameController {
                 mapList.add(mapa);
             }
         }
-
 
         return mapList;
     }
@@ -221,7 +218,6 @@ public class GameController {
 
         return ss.map(salvo -> salvo.makeSalvoDTO()).collect((Collectors.toList()));
     }
-
 
     //====================== ALL GAMES =====================================================//////
     @RequestMapping("/games")
@@ -302,8 +298,7 @@ public class GameController {
 
     }
 
-
-} // class GameController
+}
 
 
 

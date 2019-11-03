@@ -50,39 +50,35 @@ public class SalvoController {
                     HttpStatus.UNAUTHORIZED);
         }
 
-      if(gamePlayer.getSalvoes().isEmpty()){
-          salvo.setTurn(1);
-          salvo.setGamePlayer(gamePlayer);
-          salvoRepository.save(salvo);
-          return new ResponseEntity<>(makeMap("OK", "Turn Set"), HttpStatus.CREATED);
-      }
+        if(gamePlayer.getSalvoes().isEmpty()){
+            salvo.setTurn(1);
+            salvo.setGamePlayer(gamePlayer);
+            salvoRepository.save(salvo);
+            return new ResponseEntity<>(makeMap("OK", "Turn Set"), HttpStatus.CREATED);
+        }
 
-      //======
+        GamePlayer opponent = getOpponent(gamePlayer).orElse(null);
 
-        // TIRA ERROR CUANDO INTENTO AGREGAR SALVOES EN EL TURNO 2, PARA EL PLAYER 2, FORBIDDEN; ADEMAS SE DESORDENA EL JSON ========================
-
-      GamePlayer opponent = getOpponent(gamePlayer).orElse(null);
-
-      if(opponent != null){
-          if(gamePlayer.getSalvoes().size() == opponent.getSalvoes().size()){
-              salvo.setTurn(gamePlayer.getSalvoes().size()+1);
-              salvo.setGamePlayer(gamePlayer);
-          } else {
-              return new ResponseEntity<>(makeMap("ERROR", "Ya tienes Salvoes en este turno"), HttpStatus.FORBIDDEN); }
-          }
+        if(opponent != null){
+            if(gamePlayer.getSalvoes().size() == opponent.getSalvoes().size()){
+                salvo.setTurn(gamePlayer.getSalvoes().size()+1);
+                salvo.setGamePlayer(gamePlayer);
+            } else {
+                return new ResponseEntity<>(makeMap("ERROR", "Ya tienes Salvoes en este turno"), HttpStatus.FORBIDDEN); }
+        }
         else{
 
-              return new ResponseEntity<>(makeMap("ERROR", "NO hay oponente no se puede guardar el salvo"), HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(makeMap("ERROR", "NO hay oponente no se puede guardar el salvo"), HttpStatus.FORBIDDEN);
 
-      }
+        }
         salvo.setGamePlayer(gamePlayer);
-          salvoRepository.save(salvo);
+        salvoRepository.save(salvo);
 
         return new ResponseEntity<>(makeMap("OK", "Salvoes added"), HttpStatus.CREATED);
 
-        }
+    }
 
-        // Obtengo el player opponent
+    // Obtengo el player opponent
     private Optional <GamePlayer> getOpponent(GamePlayer self){
 
         return self.getGame().getGamePlayers().stream().filter(gamePlayer -> gamePlayer.getId() != self.getId()).findFirst();
