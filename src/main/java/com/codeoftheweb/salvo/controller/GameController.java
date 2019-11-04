@@ -15,7 +15,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-
 @RestController
 @RequestMapping("/api")
 public class GameController {
@@ -71,7 +70,7 @@ public class GameController {
         dto.put("created", gp.getGame().getCreationDate());
         dto.put("gamePlayers", makeGamePlayer(gp.getGame().getGamePlayers()));
         dto.put("ships", makeShips(gp.getShips()));
-        dto.put("salvoes", makeSalvos(gp.getGame().getGamePlayers()));//ya le paso el stream completed de salvos del game*/
+        dto.put("salvoes", makeSalvos(gp.getGame().getGamePlayers()));//le pase el stream completo de salvos del game*/
         dto.put("hits", hitsDTO(gp));
         dto.put("gameState", GameState.PLACESHIPS);
         return dto;
@@ -224,8 +223,8 @@ public class GameController {
 
     //=================== CHECKING GAME STATE =========================================================================/
     private void checkGameState(GamePlayer gamePlayer1){
-       // int sumatoria;
-       // int sumatoria2;
+        // int sumatoria;
+        // int sumatoria2;
         Game game;
         game = gamePlayer1.getGame();
 
@@ -239,16 +238,33 @@ public class GameController {
             gamePlayer1.setGameState(GameState.PLACESHIPS);
         }
 
+        //Chequeo que haya más de un gameplayer en la partida
+        if(gamePlayer1.getPlayer().getGamePlayers().size() > 1){
+            //Obtengo Gameplayers 2
+            GamePlayer gamePlayer2 = new GamePlayer();
+
+            for (GamePlayer gamePlayer : game.getGamePlayers()) {  // chequeo que los GPs sean diferentes
+                if (gamePlayer.getId() != gamePlayer1.getId()) gamePlayer2 = gamePlayer;
+            }
+
+
+
+
+
+
+
+
+        }
+
+
+
+
 
 
 
 
 
     }
-
-
-
-
 
 
     //====================== ALL GAMES =====================================================//////
@@ -329,7 +345,6 @@ public class GameController {
         return authentication == null || authentication instanceof AnonymousAuthenticationToken;
 
     }
-
 
 } // class GameController
 

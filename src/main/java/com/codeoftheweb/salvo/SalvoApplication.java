@@ -30,6 +30,7 @@ import java.util.List;
 
 @SpringBootApplication
 public class SalvoApplication {
+
     public static void main(String[] args) {
         SpringApplication.run(SalvoApplication.class);
     }
@@ -250,7 +251,7 @@ public class SalvoApplication {
             ship20.setGamePlayer(gamePlayer10);
             ship21.setGamePlayer(gamePlayer10);
 
-          /*  ship22.setGamePlayer(gamePlayer11);
+          /* ship22.setGamePlayer(gamePlayer11);
             ship23.setGamePlayer(gamePlayer11);
             ship24.setGamePlayer(gamePlayer13);
             ship25.setGamePlayer(gamePlayer13);
@@ -363,6 +364,7 @@ public class SalvoApplication {
         };
     }
 }
+
 //============ VALIDATION =============================================
 @Configuration
 class WebSecurityConfiguration extends GlobalAuthenticationConfigurerAdapter {
