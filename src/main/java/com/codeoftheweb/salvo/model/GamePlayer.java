@@ -53,7 +53,7 @@ public class GamePlayer {
         Map<String, Object> dto = new LinkedHashMap<>();
         dto.put("id", this.getId());
         dto.put("player", player.makePlayerDTO());  // Tira un error cuando se crea un juego y nose agregan ambos jugadores
-        // Por ese motivo se considero crear solo 10 GamePlayers ya que estaban completos.
+                                                       // Por ese motivo se considero crear solo 10 GamePlayers ya que estaban completos.
         return dto;
     }
 

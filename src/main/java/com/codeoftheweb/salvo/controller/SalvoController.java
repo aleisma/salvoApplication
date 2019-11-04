@@ -57,8 +57,6 @@ public class SalvoController {
           return new ResponseEntity<>(makeMap("OK", "Turn Set"), HttpStatus.CREATED);
       }
 
-      //======
-
         // TIRA ERROR CUANDO INTENTO AGREGAR SALVOES EN EL TURNO 2, PARA EL PLAYER 2, FORBIDDEN; ADEMAS SE DESORDENA EL JSON ========================
 
       GamePlayer opponent = getOpponent(gamePlayer).orElse(null);

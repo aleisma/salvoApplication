@@ -24,6 +24,8 @@ public class GameController {
     GamePlayerRepository gamePlayerRepository;
     @Autowired
     PlayerRepository playerRepository;
+    @Autowired
+    ScoreRepository scoreRepository;
 
     //===================== /GAME VIEW/GP =============================================================================/
     @RequestMapping("/game_view/{gp}")
@@ -111,7 +113,7 @@ public class GameController {
                 mapa.put("gamePlayers", makeGamePlayer(gamePlayer1.getGame().getGamePlayers()));
                 mapa.put("ships", makeShips(gamePlayer1.getShips()));
                 mapa.put("salvoes", makeSalvos(gamePlayer1.getGame().getGamePlayers()));
-                mapa.put("gameState", GameState.PLACESHIPS);
+                mapa.put("gameState", GameState.WAIT);
 
                 mapa.put("self", "" );
                 mapa.put("opponent", "");
@@ -222,10 +224,11 @@ public class GameController {
     }
 
     //=================== CHECKING GAME STATE =========================================================================/
-    private void checkGameState(GamePlayer gamePlayer1){
-        // int sumatoria;
-        // int sumatoria2;
+    private GameState  checkGameState(GamePlayer gamePlayer1){
+        int sumatoria;
+        int sumatoria2;
         Game game;
+
         game = gamePlayer1.getGame();
 
         gamePlayer1.setGameState(GameState.WAIT);
@@ -247,27 +250,77 @@ public class GameController {
                 if (gamePlayer.getId() != gamePlayer1.getId()) gamePlayer2 = gamePlayer;
             }
 
+            // Obtengo sumatoria de hits de ambos players
+            sumatoria = sumatoriaHits(gamePlayer1,gamePlayer2);
+            sumatoria2 = sumatoriaHits(gamePlayer2,gamePlayer1);
 
+            // Consigo ultimo turno
+            int lastTurn;
+            lastTurn = gamePlayer2.getSalvoes().size() + 1;
+            if (gamePlayer1.getSalvoes().size() > gamePlayer2.getSalvoes().size())
+                lastTurn = gamePlayer1.getSalvoes().size();
 
+            if ((gamePlayer1.getSalvoes().size() < lastTurn) && (gamePlayer1.getShips().size() > 0) && (gamePlayer2.getShips().size() > 0) && (sumatoria != 17)) {
+                gamePlayer1.setGameState(GameState.PLAY);
+            }
 
+            // Chequeo de TIE,  WON,  LOST
+            if ((sumatoria == 17 || sumatoria2 == 17) && gamePlayer1.getSalvoes().size() == gamePlayer2.getSalvoes().size()) {
+                if (sumatoria == 17 && sumatoria2 == 17) {
+                    gamePlayer1.setGameState(GameState.TIE);
+                    gamePlayer2.setGameState(GameState.TIE);
+                    if(game.getScores().size() == 0) {
+                        scoreRepository.save(new Score( 0.5, gamePlayer1.getPlayer(), game));
+                        scoreRepository.save(new Score(0.5, gamePlayer2.getPlayer(), game));
+                    }
+                }
+                if(sumatoria > sumatoria2){
+                    gamePlayer1.setGameState(GameState.WON);
+                    gamePlayer2.setGameState(GameState.LOST);
+                    if(game.getScores().size() == 0){
+                        scoreRepository.save(new Score(1.0, gamePlayer1.getPlayer(), game));
+                        scoreRepository.save(new Score(0.0, gamePlayer2.getPlayer(), game));
+                    }
+                }
+                else {
+                    gamePlayer2.setGameState(GameState.WON);
+                    gamePlayer1.setGameState(GameState.LOST);
+                    if(game.getScores().size() == 0) {
+                        scoreRepository.save(new Score(1.0, gamePlayer2.getPlayer(), game));
+                        scoreRepository.save(new Score(0.0, gamePlayer1.getPlayer(), game));
+                    }
+                }
 
-
-
-
+            }
         }
-
-
-
-
-
-
-
-
+        return gamePlayer1.getGameState();
 
     }
 
+    //============================ SUMATORIA DE HITS ==================================================================/
+    private int sumatoriaHits(GamePlayer gamePlayer2, GamePlayer gamePlayer1) {
+        int sumatoria = 0;
+        Set<Salvo> gp2salvos = gamePlayer2.getSalvoes();
+        for (Salvo salvo : gp2salvos) { // Cada salvo
+            for (String salvoLocation : salvo.getLocations()) { // Cada salvo location
+                boolean hit = false;
+                for (Ship ship : gamePlayer1.getShips()) { // Cada ship
+                    for (String shipLocation : ship.getLocations()) { // Cada ship location
+                        if (salvoLocation == shipLocation) {
+                            hit = true;
+                            sumatoria++;
+                        }
+                        if (hit) break;
+                    }
+                    if (hit) break;
+                }
+            }
+        }
+        return sumatoria;
 
-    //====================== ALL GAMES =====================================================//////
+    }
+
+    //====================== ALL GAMES ================================================================================/
     @RequestMapping("/games")
     public Map<String, Object> getGameAll(Authentication authentication) {
 
@@ -287,7 +340,7 @@ public class GameController {
         return dto;
     }
 
-    //======================== GAME METHOD POST ===========================================================
+    //======================== GAME METHOD POST =======================================================================/
     @RequestMapping(path = "/games", method = RequestMethod.POST)
     public ResponseEntity<Object> createGame(Authentication authentication) {
 
@@ -308,7 +361,7 @@ public class GameController {
         return new ResponseEntity<>(makeMap("gpid",gamePlayer.getId()),HttpStatus.CREATED);
     }
 
-    //======================== GAME METHOD GAME/NN/PLAYERS POST ===========================================
+    //======================== GAME METHOD GAME/NN/PLAYERS POST =======================================================/
     @RequestMapping(path = "/game/{gameID}/players", method = RequestMethod.POST)
     public ResponseEntity<Map<String, Object>> joinGame(@PathVariable Long gameID, Authentication authentication) {
         if (isGuest(authentication)){
@@ -346,7 +399,7 @@ public class GameController {
 
     }
 
-} // class GameController
+}
 
 
 

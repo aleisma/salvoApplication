@@ -335,20 +335,20 @@ public class SalvoApplication {
             salvoRepository.save(salvo20);
             salvoRepository.save(salvo21);
 
-            //* =================== SCORES ===================
-           Score scoreBauer1 = new Score(1.0,bauer, game1 );
-           Score scoreBauer2 = new Score(0.5,bauer, game2 );
-          Score scoreBauer3 = new Score(0.5,bauer, game4 );
-          Score scoreBauer4 = new Score(0.0 ,bauer, game5 );
+            //* =================== SCORES ============================================================================/
+            Score scoreBauer1 = new Score(1.0,bauer, game1 );
+            Score scoreBauer2 = new Score(0.5,bauer, game2 );
+            Score scoreBauer3 = new Score(0.5,bauer, game4 );
+            Score scoreBauer4 = new Score(0.0 ,bauer, game5 );
 
             Score scoreObrian1 = new Score(1.0,obrian, game1 );
-          Score scoreObrian2 = new Score(0.0,obrian, game2 );
-          Score scoreObrian3 = new Score(0.5,obrian, game3 );
+            Score scoreObrian2 = new Score(0.0,obrian, game2 );
+            Score scoreObrian3 = new Score(0.5,obrian, game3 );
             Score scoreObrian4 = new Score(0.5,obrian, game4 );
 
-          Score scoreAlmeida1 = new Score(0.0,almeida, game3 );
-           //Score scoreAlmeida2 = new Score(0.0,almeida, game6 );
-          Score scoreAlmeida3 = new Score(0.0,almeida, game3 );
+            Score scoreAlmeida1 = new Score(0.0,almeida, game3 );
+            //Score scoreAlmeida2 = new Score(0.0,almeida, game6 );
+            Score scoreAlmeida3 = new Score(0.0,almeida, game3 );
 
             scoreRepository.save(scoreBauer1);
             scoreRepository.save(scoreBauer2);
@@ -359,13 +359,13 @@ public class SalvoApplication {
             scoreRepository.save(scoreObrian3);
             scoreRepository.save(scoreObrian4);
             scoreRepository.save(scoreAlmeida1);
-           // scoreRepository.save(scoreAlmeida2);
+            // scoreRepository.save(scoreAlmeida2);
             scoreRepository.save(scoreAlmeida3);
         };
     }
 }
 
-//============ VALIDATION =============================================
+//============ VALIDATION =============================================================================================/
 @Configuration
 class WebSecurityConfiguration extends GlobalAuthenticationConfigurerAdapter {
 
@@ -386,7 +386,7 @@ class WebSecurityConfiguration extends GlobalAuthenticationConfigurerAdapter {
     }
 }
 
-//=================== Security Configuration ================
+//=================== SECURITY CONFIGURATION ==========================================================================/
 @EnableWebSecurity
 @Configuration
 class WebSecurityConfig extends WebSecurityConfigurerAdapter {
