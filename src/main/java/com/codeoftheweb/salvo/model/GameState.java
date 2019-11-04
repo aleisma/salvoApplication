@@ -2,7 +2,7 @@ package com.codeoftheweb.salvo.model;
 
 public enum GameState {
     PLACESHIPS,
-    WAITING_FOR_OPPONENT,
+    WAITINGFOROPP,
     WON,
     TIE,
     LOST,

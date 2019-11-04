@@ -223,16 +223,16 @@ public class GameController {
     }
 
     //=================== CHECKING GAME STATE =========================================================================/
-    private  GameState checkGameState(GamePlayer gamePlayer1){
-        int sumatoria;
-        int sumatoria2;
+    private void checkGameState(GamePlayer gamePlayer1){
+       // int sumatoria;
+       // int sumatoria2;
         Game game;
         game = gamePlayer1.getGame();
 
         gamePlayer1.setGameState(GameState.WAIT);
 
         if (game.getGamePlayers().size() == 1) {
-            gamePlayer1.setGameState(GameState.WAITING_FOR_OPPONENT);
+            gamePlayer1.setGameState(GameState.WAITINGFOROPP);
         }
 
         if (gamePlayer1.getShips().size() == 0) {
