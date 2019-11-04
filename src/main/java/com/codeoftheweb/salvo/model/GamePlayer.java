@@ -14,8 +14,7 @@ public class GamePlayer {
     @Id
     private Long id;
     private LocalDateTime joinDate;
-
-
+    private GameState gameState;
 
     //*===== RELATION 1-N BETWEEN Game-GamePlayer ==========
     @ManyToOne(fetch = FetchType.EAGER)
@@ -88,6 +87,14 @@ public class GamePlayer {
 
     public void setJoinDate(LocalDateTime joinDate) {
         this.joinDate = joinDate;
+    }
+
+    public GameState getGameState() {
+        return gameState;
+    }
+
+    public void setGameState(GameState gameState) {
+        this.gameState = gameState;
     }
 
     public Game getGame() {

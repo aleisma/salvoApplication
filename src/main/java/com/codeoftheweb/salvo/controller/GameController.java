@@ -222,6 +222,35 @@ public class GameController {
         return ss.map(salvo -> salvo.makeSalvoDTO()).collect((Collectors.toList()));
     }
 
+    //=================== CHECKING GAME STATE =========================================================================/
+    private  GameState checkGameState(GamePlayer gamePlayer1){
+        int sumatoria;
+        int sumatoria2;
+        Game game;
+        game = gamePlayer1.getGame();
+
+        gamePlayer1.setGameState(GameState.WAIT);
+
+        if (game.getGamePlayers().size() == 1) {
+            gamePlayer1.setGameState(GameState.WAITING_FOR_OPPONENT);
+        }
+
+        if (gamePlayer1.getShips().size() == 0) {
+            gamePlayer1.setGameState(GameState.PLACESHIPS);
+        }
+
+
+
+
+
+
+    }
+
+
+
+
+
+
     //====================== ALL GAMES =====================================================//////
     @RequestMapping("/games")
     public Map<String, Object> getGameAll(Authentication authentication) {
