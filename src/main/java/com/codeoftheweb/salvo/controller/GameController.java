@@ -74,7 +74,7 @@ public class GameController {
         dto.put("ships", makeShips(gp.getShips()));
         dto.put("salvoes", makeSalvos(gp.getGame().getGamePlayers()));//le pase el stream completo de salvos del game*/
         dto.put("hits", hitsDTO(gp));
-        dto.put("gameState", GameState.PLACESHIPS);
+        dto.put("gameState", checkGameState(gp));
         return dto;
     }
 
@@ -113,7 +113,7 @@ public class GameController {
                 mapa.put("gamePlayers", makeGamePlayer(gamePlayer1.getGame().getGamePlayers()));
                 mapa.put("ships", makeShips(gamePlayer1.getShips()));
                 mapa.put("salvoes", makeSalvos(gamePlayer1.getGame().getGamePlayers()));
-                mapa.put("gameState", GameState.WAIT);
+                mapa.put("gameState", GameState.PLACESHIPS);
 
                 mapa.put("self", "" );
                 mapa.put("opponent", "");
@@ -224,7 +224,7 @@ public class GameController {
     }
 
     //=================== CHECKING GAME STATE =========================================================================/
-    private GameState  checkGameState(GamePlayer gamePlayer1){
+    private GameState checkGameState(GamePlayer gamePlayer1){
         int sumatoria;
         int sumatoria2;
         Game game;
@@ -240,6 +240,10 @@ public class GameController {
         if (gamePlayer1.getShips().size() == 0) {
             gamePlayer1.setGameState(GameState.PLACESHIPS);
         }
+        else {
+            gamePlayer1.setGameState(GameState.PLAY);
+        }
+
 
         //Chequeo que haya más de un gameplayer en la partida
         if(gamePlayer1.getPlayer().getGamePlayers().size() > 1){
@@ -264,7 +268,7 @@ public class GameController {
                 gamePlayer1.setGameState(GameState.PLAY);
             }
 
-            // Chequeo de TIE,  WON,  LOST
+            // Checking to TIE,  WON,  LOST
             if ((sumatoria == 17 || sumatoria2 == 17) && gamePlayer1.getSalvoes().size() == gamePlayer2.getSalvoes().size()) {
                 if (sumatoria == 17 && sumatoria2 == 17) {
                     gamePlayer1.setGameState(GameState.TIE);

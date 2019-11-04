@@ -52,9 +52,7 @@ public class ShipController {
             return new ResponseEntity<>(makeMap("error", "\n" + "El jugador tiene Ships colocados"),
                     HttpStatus.FORBIDDEN);
         }
-        else{
-             System.out.println("ERROR AL AGREGAR SHIPS");
-        }
+
 
         ships.forEach( ship -> { ship.setGamePlayer(gamePlayer);
 

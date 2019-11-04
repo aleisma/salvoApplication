@@ -28,7 +28,7 @@ public class SalvoController {
     SalvoRepository salvoRepository;
 
     //================== GAMES/PLAYERS/nn/SALVOES ========================================
-    @RequestMapping("/games/players/{gamePlayerId}/salvos")
+    @RequestMapping("/games/players/{gamePlayerId}/salvoes")
     public ResponseEntity<Map<String, Object>> getSalvoes(@PathVariable long gamePlayerId,
                                                           Authentication  authentication,
                                                           @RequestBody Salvo salvo) {
@@ -45,9 +45,7 @@ public class SalvoController {
         GamePlayer gamePlayer = gamePlayerRepository.findById(gamePlayerId).get();
 
         if (!authentication.getName().equals(gamePlayer.getPlayer().getUserName())) {
-            return new ResponseEntity<>(makeMap("error", "The current user is not the GamePlayer the ID" +
-                    "references"),
-                    HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(makeMap("error", "The current user is not the GamePlayer the ID" + "references"), HttpStatus.UNAUTHORIZED);
         }
 
       if(gamePlayer.getSalvoes().isEmpty()){
