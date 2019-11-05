@@ -35,11 +35,10 @@ public class Salvo {
 
     public Salvo(){}
 
-    //*===== MAP SALVO-GamePlayer ==================
     public Map<String, Object> makeSalvoDTO() {
-        Map<String, Object> dto = new LinkedHashMap<>();
+        Map<String, Object> dto = new LinkedHashMap<String, Object>();
         dto.put("turn", this.getTurn());
-        dto.put("player", this.getId());
+        dto.put("player",this.getGamePlayer().getPlayer().getId());
         dto.put("locations", this.getLocations());
         return dto;
     }

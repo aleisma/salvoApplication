@@ -60,9 +60,10 @@ public class SalvoController {
       GamePlayer opponent = getOpponent(gamePlayer).orElse(null);
 
       if(opponent != null){
-          if(gamePlayer.getSalvoes().size() == opponent.getSalvoes().size()){
+          if(gamePlayer.getSalvoes().size() <= opponent.getSalvoes().size()){
               salvo.setTurn(gamePlayer.getSalvoes().size()+1);
               salvo.setGamePlayer(gamePlayer);
+              salvoRepository.save(salvo);
           } else {
               return new ResponseEntity<>(makeMap("ERROR", "Ya tienes Salvoes en este turno"), HttpStatus.FORBIDDEN); }
           }
