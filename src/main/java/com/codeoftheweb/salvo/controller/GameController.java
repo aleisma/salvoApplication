@@ -34,26 +34,26 @@ public class GameController {
         GamePlayer gamePlayer = gamePlayerRepository.findById(gp).orElse(null);
 
         if(gamePlayer == null ){
-            return new  ResponseEntity<>(makeMap("ERROR!","EL GAMEPLAYER NO EXISTE"),HttpStatus.UNAUTHORIZED);
+            return new  ResponseEntity<>(makeMap("error","EL GAMEPLAYER NO EXISTE"),HttpStatus.UNAUTHORIZED);
         }
 
         if(isGuest(authentication)){
-            return new  ResponseEntity<>(makeMap("ERROR!!","NO PUEDE ACCEDER A ESTA VISTA"),HttpStatus.UNAUTHORIZED);
+            return new  ResponseEntity<>(makeMap("error","NO PUEDE ACCEDER A ESTA VISTA"),HttpStatus.UNAUTHORIZED);
         }
         Player  player  = playerRepository.findByUserName(authentication.getName());
 
         Game game = gamePlayer.getGames();
 
         if(player == null){
-            return new  ResponseEntity<>(makeMap("ERROR!","PLAYER NO EXISTE"),HttpStatus.UNAUTHORIZED);
+            return new  ResponseEntity<>(makeMap("error","PLAYER NO EXISTE"),HttpStatus.UNAUTHORIZED);
         }
 
         if(gamePlayer == null ){
-            return  new ResponseEntity<>(makeMap("ERROR!"," GP NO EXISTE"), HttpStatus.UNAUTHORIZED);
+            return  new ResponseEntity<>(makeMap("error"," GP NO EXISTE"), HttpStatus.UNAUTHORIZED);
         }
 
         if(gamePlayer.getPlayer().getId() !=  player.getId()){
-            return new  ResponseEntity<>(makeMap("ERROR!!","NO PUEDE ACCEDER A ESTA VISTA"),HttpStatus.CONFLICT);
+            return new  ResponseEntity<>(makeMap("error","NO PUEDE ACCEDER A ESTA VISTA"),HttpStatus.CONFLICT);
         }
 
       if (gamePlayer.getPlayer() == player) {

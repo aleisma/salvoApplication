@@ -28,11 +28,11 @@ public class PlayerController {
     public ResponseEntity<Object> register(@RequestParam String email, @RequestParam String password) {
 
         if ( email.isEmpty() || password.isEmpty()) {
-            return new ResponseEntity<>("Missing data", HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(makeMap("error", "missing data"), HttpStatus.FORBIDDEN);
         }
 
         if (playerRepository.findByUserName(email) != null) {
-            return new ResponseEntity<>("Name already in use", HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(makeMap("error", "Name already in use"), HttpStatus.FORBIDDEN);
         }
 
         playerRepository.save(new Player( email, passwordEncoder.encode(password)));
