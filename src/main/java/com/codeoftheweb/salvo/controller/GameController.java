@@ -106,19 +106,7 @@ public class GameController {
 
             if( gamePlayer2 == null)
             {
-                Map<String, Object> mapa = new LinkedHashMap<>();
-
-                mapa.put("id", gamePlayer1.getGame().getId());
-                mapa.put("created", gamePlayer1.getGame().getCreationDate());
-                mapa.put("gamePlayers", makeGamePlayer(gamePlayer1.getGame().getGamePlayers()));
-                mapa.put("ships", makeShips(gamePlayer1.getShips()));
-                mapa.put("salvoes", makeSalvos(gamePlayer1.getGame().getGamePlayers()));
-                mapa.put("gameState", GameState.PLACESHIPS);
-
-                mapa.put("self", "" );
-                mapa.put("opponent", "");
-
-               Collections.emptyMap();
+                List<String> lista = new ArrayList<>();
             }
 
       else  {
@@ -223,82 +211,91 @@ public class GameController {
         return ss.map(salvo -> salvo.makeSalvoDTO()).collect((Collectors.toList()));
     }
 
+    //======================== GET OPPONENT ===========================================================================/
+    private Optional <GamePlayer> getOpponent(GamePlayer self){
+
+        return self.getGame().getGamePlayers().stream().filter(gamePlayer -> gamePlayer.getId() != self.getId()).findFirst();
+    }
+
     //=================== CHECKING GAME STATE =========================================================================/
-    private GameState checkGameState(GamePlayer gamePlayer1){
+    private GameState checkGameState (GamePlayer gamePlayer1) {
+
         int sumatoria;
         int sumatoria2;
-        Game game;
-
-        game = gamePlayer1.getGame();
-
-        gamePlayer1.setGameState(GameState.WAIT);
-
-        if (game.getGamePlayers().size() == 1) {
-            gamePlayer1.setGameState(GameState.WAITINGFOROPP);
-        }
+        Game game = gamePlayer1.getGame();
 
         if (gamePlayer1.getShips().size() == 0) {
-            gamePlayer1.setGameState(GameState.PLACESHIPS);
-        }
-        else {
-            gamePlayer1.setGameState(GameState.PLAY);
+            return GameState.PLACESHIPS;
         }
 
+        if (gamePlayer1.getGame().getGamePlayers().size() == 1){
+            return GameState.WAITINGFOROPP;
+        }
 
-        //Chequeo que haya más de un gameplayer en la partida
-        if(gamePlayer1.getPlayer().getGamePlayers().size() > 1){
-            //Obtengo Gameplayers 2
-            GamePlayer gamePlayer2 = new GamePlayer();
+        if (gamePlayer1.getGame().getGamePlayers().size() == 2) {
 
-            for (GamePlayer gamePlayer : game.getGamePlayers()) {  // chequeo que los GPs sean diferentes
-                if (gamePlayer.getId() != gamePlayer1.getId()) gamePlayer2 = gamePlayer;
-            }
+            GamePlayer opponent = getOpponent(gamePlayer1).orElse(null);
 
-            // Obtengo sumatoria de hits de ambos players
-            sumatoria = sumatoriaHits(gamePlayer1,gamePlayer2);
-            sumatoria2 = sumatoriaHits(gamePlayer2,gamePlayer1);
+            for (GamePlayer gamePlayer : gamePlayer1.getGame().getGamePlayers()) {
 
-            // Consigo ultimo turno
-            int lastTurn;
-            lastTurn = gamePlayer2.getSalvoes().size() + 1;
-            if (gamePlayer1.getSalvoes().size() > gamePlayer2.getSalvoes().size())
-                lastTurn = gamePlayer1.getSalvoes().size();
+                // Consigo sumatoria de hits de ambos players
+                sumatoria = sumatoriaHits(gamePlayer1,opponent );
+                sumatoria2 = sumatoriaHits(opponent ,gamePlayer1);
 
-            if ((gamePlayer1.getSalvoes().size() < lastTurn) && (gamePlayer1.getShips().size() > 0) && (gamePlayer2.getShips().size() > 0) && (sumatoria != 17)) {
-                gamePlayer1.setGameState(GameState.PLAY);
-            }
-
-            // Checking to TIE,  WON,  LOST
-            if ((sumatoria == 17 || sumatoria2 == 17) && gamePlayer1.getSalvoes().size() == gamePlayer2.getSalvoes().size()) {
-                if (sumatoria == 17 && sumatoria2 == 17) {
-                    gamePlayer1.setGameState(GameState.TIE);
-                    gamePlayer2.setGameState(GameState.TIE);
-                    if(game.getScores().size() == 0) {
-                        scoreRepository.save(new Score( 0.5, gamePlayer1.getPlayer(), game));
-                        scoreRepository.save(new Score(0.5, gamePlayer2.getPlayer(), game));
-                    }
-                }
-                if(sumatoria > sumatoria2){
-                    gamePlayer1.setGameState(GameState.WON);
-                    gamePlayer2.setGameState(GameState.LOST);
-                    if(game.getScores().size() == 0){
-                        scoreRepository.save(new Score(1.0, gamePlayer1.getPlayer(), game));
-                        scoreRepository.save(new Score(0.0, gamePlayer2.getPlayer(), game));
-                    }
-                }
-                else {
-                    gamePlayer2.setGameState(GameState.WON);
-                    gamePlayer1.setGameState(GameState.LOST);
-                    if(game.getScores().size() == 0) {
-                        scoreRepository.save(new Score(1.0, gamePlayer2.getPlayer(), game));
-                        scoreRepository.save(new Score(0.0, gamePlayer1.getPlayer(), game));
+                if(opponent  != null){
+                    if ( (gamePlayer1.getSalvoes().size() == opponent.getSalvoes().size()) && (gamePlayer1.getId() < opponent.getId())
+                            && (sumatoria !=17) && (sumatoria2 !=17)) {
+                        return GameState.PLAY;
                     }
                 }
 
-            }
-        }
-        return gamePlayer1.getGameState();
+                if (gamePlayer1.getSalvoes().size() < opponent.getSalvoes().size() && (sumatoria !=17) && (sumatoria2 !=17)){
+                    return GameState.PLAY;
+                }
+                if ((gamePlayer1.getSalvoes().size() == opponent.getSalvoes().size()) && (gamePlayer1.getId() > opponent.getId())  ) {
+                    return GameState.WAIT;
+                }
+                if ((gamePlayer1.getSalvoes().size() > opponent.getSalvoes().size()) && (sumatoria !=17 && sumatoria2 !=17 )){
+                    return GameState.WAIT;
+                }
 
+
+
+
+                //================= TIE, WON, LOST ===============================================================
+
+          /*     if( (17 == sumatoria || sumatoria2  == 17) || (opponent.getSalvoes() == gamePlayer1.getSalvoes() ) ){
+
+                    if(sumatoria == sumatoria2){
+
+                        if (((gamePlayer1.getId() > opponent.getId()))) {
+                            return GameState.TIE;
+                        }
+                        if (((gamePlayer1.getId() < opponent.getId()))) {
+                            return GameState.TIE;
+                        }
+
+
+                    }*/
+
+                if ((gamePlayer1.getSalvoes().size() == opponent.getSalvoes().size()) || (sumatoria==17 && sumatoria2==17)) {
+                    return GameState.TIE;
+                }
+
+
+
+
+          /*      if ((gamePlayer1.getSalvoes().size() == opponent.getSalvoes().size())  && (sumatoria==17)  ) {
+                    return GameState.WON;
+                }
+
+                if ((gamePlayer1.getSalvoes().size() == opponent.getSalvoes().size()) ) {
+                    return GameState.LOST;
+                }*/
+            }
+
+        }
+        return GameState.UNDEFINED;
     }
 
     //============================ SUMATORIA DE HITS ==================================================================/
@@ -365,33 +362,6 @@ public class GameController {
         return new ResponseEntity<>(makeMap("gpid",gamePlayer.getId()),HttpStatus.CREATED);
     }
 
-    //======================== GAME METHOD GAME/NN/PLAYERS POST =======================================================/
-    @RequestMapping(path = "/game/{gameID}/players", method = RequestMethod.POST)
-    public ResponseEntity<Map<String, Object>> joinGame(@PathVariable Long gameID, Authentication authentication) {
-        if (isGuest(authentication)){
-            return new ResponseEntity<>(makeMap("error", "You can't join a Game if You're Not Logged In!"), HttpStatus.UNAUTHORIZED);
-        }
-
-        Player  player  = playerRepository.findByUserName(authentication.getName());
-        Game gameToJoin = gameRepository.getOne(gameID);
-
-        if (gameRepository.getOne(gameID) == null) {
-            return new ResponseEntity<>(makeMap("error", "No such game."), HttpStatus.FORBIDDEN);
-        }
-
-        if(player ==  null){
-            return new ResponseEntity<>(makeMap("error", "No such game."), HttpStatus.FORBIDDEN);
-        }
-        long gamePlayersCount = gameToJoin.getGamePlayers().size();
-
-        if (gamePlayersCount == 1) {
-            GamePlayer gameplayer = gamePlayerRepository.save(new GamePlayer( player, gameToJoin));
-            return new ResponseEntity<>(makeMap("gpid", gameplayer.getId()), HttpStatus.CREATED);
-        } else {
-            return new ResponseEntity<>(makeMap("error", "Game is full!"), HttpStatus.FORBIDDEN);
-        }
-    }
-
     private Map<String, Object> makeMap(String key, Object value) {
         Map<String, Object> map = new HashMap<>();
         map.put(key,value);
@@ -404,11 +374,3 @@ public class GameController {
     }
 
 }
-
-
-
-
-
-
-
-

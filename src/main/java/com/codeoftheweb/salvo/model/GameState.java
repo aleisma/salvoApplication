@@ -7,5 +7,6 @@ public enum GameState {
     TIE,
     LOST,
     WAIT,
-    PLAY
+    PLAY,
+    UNDEFINED
 }
