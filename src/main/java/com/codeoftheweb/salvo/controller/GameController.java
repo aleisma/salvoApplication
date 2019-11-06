@@ -222,6 +222,9 @@ public class GameController {
         int sumatoria2;
         Game game = gamePlayer1.getGame();
 
+
+
+
         if (gamePlayer1.getShips().size() == 0) {
             return GameState.PLACESHIPS;
         }
@@ -236,9 +239,9 @@ public class GameController {
 
 
             // Consigo sumatoria de hits de ambos players
-            sumatoria = hits(gamePlayer1);
+            sumatoria = hits(opponent, gamePlayer1);
 
-            sumatoria2 = hits(opponent);
+            sumatoria2 = hits(gamePlayer1, opponent);
 
             if ((gamePlayer1.getSalvoes().size() == opponent.getSalvoes().size()) && (gamePlayer1.getId() < opponent.getId())
                     && (sumatoria != 17) && (sumatoria2 != 17)) {
@@ -258,8 +261,6 @@ public class GameController {
 
             System.out.println("hits player 1: " + sumatoria);
             System.out.println("hits player 2: " + sumatoria2);
-
-
 
             if ((gamePlayer1.getSalvoes().size() == opponent.getSalvoes().size()) && (sumatoria == 17 && sumatoria2 == 17)) {
 
@@ -282,28 +283,28 @@ public class GameController {
     }
 
     //============================ SUMATORIA DE HITS ==================================================================/
-    private int hits(GamePlayer gamePlayer1) {
 
-        int sumatoria = 0;
-
-        GamePlayer opponent = getOpponent(gamePlayer1).orElse(null);
-
-        List<Salvo> opponent_salvoes = opponent.getSalvoes()
-                .stream()
-                .sorted((a, b) -> a.getTurn() - b.getTurn())
-                .collect(Collectors.toList());
-
-        for (Salvo salvo : opponent_salvoes) { // Cada salvo
-            for (Ship ship : gamePlayer1.getShips()) {  // Cada ship
-                for (String shipLocation : ship.getLocations()) {//// Cada ship location
-                    if (salvo.getLocations().contains(shipLocation)) {
-                        sumatoria++;
+        private int hits(GamePlayer gamePlayer2, GamePlayer gamePlayer1) {
+            int sumatoria = 0;
+            Set<Salvo> gp2salvos = gamePlayer2.getSalvoes();
+            for (Salvo salvo : gp2salvos) { // Cada salvo
+                for (String salvoLocation : salvo.getLocations()) { // Cada salvo location
+                    boolean hit = false;
+                    for (Ship ship : gamePlayer1.getShips()) { // Cada ship
+                        for (String shipLocation : ship.getLocations()) { // Cada ship location
+                            if (salvoLocation == shipLocation) {
+                                hit = true;
+                                sumatoria++;
+                            }
+                            if (hit) break;
+                        }
+                        if (hit) break;
                     }
                 }
             }
+            return sumatoria;
+
         }
-        return sumatoria;
-    }
 
     //====================== ALL GAMES ================================================================================/
     @RequestMapping("/games")
