@@ -239,8 +239,8 @@ public class GameController {
             for (GamePlayer gamePlayer : gamePlayer1.getGame().getGamePlayers()) {
 
                 // Consigo sumatoria de hits de ambos players
-                sumatoria = sumatoriaHits(gamePlayer1,opponent );
-                sumatoria2 = sumatoriaHits(opponent ,gamePlayer1);
+                sumatoria = sumatoriaHits(gamePlayer1,opponent);
+                sumatoria2 = sumatoriaHits(opponent, gamePlayer1);
 
                 if(opponent  != null){
                     if ( (gamePlayer1.getSalvoes().size() == opponent.getSalvoes().size()) && (gamePlayer1.getId() < opponent.getId())
@@ -260,38 +260,26 @@ public class GameController {
                 }
 
 
+                System.out.println("hits player 1: "+ sumatoria);
+                System.out.println("hits player 2: "+ sumatoria2);
+
+                if ( (gamePlayer1.getSalvoes().size() == opponent.getSalvoes().size()) && (sumatoria==17 && sumatoria2==17)) {
 
 
-                //================= TIE, WON, LOST ===============================================================
+                    System.out.println("hits player 1 en if: "+ sumatoria);
+                    System.out.println("hits player 2 en if: "+ sumatoria2);
 
-          /*     if( (17 == sumatoria || sumatoria2  == 17) || (opponent.getSalvoes() == gamePlayer1.getSalvoes() ) ){
-
-                    if(sumatoria == sumatoria2){
-
-                        if (((gamePlayer1.getId() > opponent.getId()))) {
-                            return GameState.TIE;
-                        }
-                        if (((gamePlayer1.getId() < opponent.getId()))) {
-                            return GameState.TIE;
-                        }
-
-
-                    }*/
-
-                if ((gamePlayer1.getSalvoes().size() == opponent.getSalvoes().size()) || (sumatoria==17 && sumatoria2==17)) {
                     return GameState.TIE;
+
                 }
 
-
-
-
-          /*      if ((gamePlayer1.getSalvoes().size() == opponent.getSalvoes().size())  && (sumatoria==17)  ) {
+              if ((gamePlayer1.getSalvoes().size() == opponent.getSalvoes().size())  && (sumatoria==17)  ) {
                     return GameState.WON;
                 }
 
                 if ((gamePlayer1.getSalvoes().size() == opponent.getSalvoes().size()) ) {
                     return GameState.LOST;
-                }*/
+                }
             }
 
         }
@@ -299,17 +287,27 @@ public class GameController {
     }
 
     //============================ SUMATORIA DE HITS ==================================================================/
-    private int sumatoriaHits(GamePlayer gamePlayer2, GamePlayer gamePlayer1) {
+    private int sumatoriaHits(GamePlayer gamePlayer1 , GamePlayer opponent) {
         int sumatoria = 0;
-        Set<Salvo> gp2salvos = gamePlayer2.getSalvoes();
+        Set<Salvo> gp2salvos = opponent.getSalvoes();
+
+
+
+
+
         for (Salvo salvo : gp2salvos) { // Cada salvo
             for (String salvoLocation : salvo.getLocations()) { // Cada salvo location
                 boolean hit = false;
-                for (Ship ship : gamePlayer1.getShips()) { // Cada ship
-                    for (String shipLocation : ship.getLocations()) { // Cada ship location
+                for (Ship ship : gamePlayer1.getShips()) {  // Cada ship
+
+                    for (String shipLocation : ship.getLocations()) {// Cada ship location
+
                         if (salvoLocation == shipLocation) {
                             hit = true;
                             sumatoria++;
+                        }
+                        else {
+                            hit = false;
                         }
                         if (hit) break;
                     }
