@@ -241,19 +241,7 @@ public class GameController {
 
                 if ((gamePlayer1.getSalvoes().size() == opponent.getSalvoes().size()) && (opponentSunkShips) && (!selfSunkShips)) {
 
-
-                    Score score = (new Score(1.0, gamePlayer1.getPlayer(), game));
-
-                    Score scoreFind = scoreRepository.findAll().stream()
-                                                               .filter(score1 -> score1.getGame() == score.getGame() && score.getPlayer() && score1.getPlayer() )
-                                                               .findAny().orElse(null);
-
-                    if(scoreFind == null){
-                        scoreRepository.save(score);
-                    }
-
-
-
+                        scoreRepository.save(new Score( 1.0, gamePlayer1.getPlayer(), game));
 
                     return GameState.WON;
                 }
@@ -261,13 +249,13 @@ public class GameController {
 
             if ((gamePlayer1.getSalvoes().size() == opponent.getSalvoes().size()) && (opponentSunkShips) && (selfSunkShips)) {
 
-                scoreRepository.save(new Score( 0.5, gamePlayer1.getPlayer(), game));
+                    scoreRepository.save(new Score( 0.5, gamePlayer1.getPlayer(), game));
 
                 return GameState.TIE;
             }
             if ((gamePlayer1.getSalvoes().size() == opponent.getSalvoes().size()) && (!opponentSunkShips) && (selfSunkShips)) {
 
-                scoreRepository.save(new Score(0.0, gamePlayer1.getPlayer(), game));
+                    scoreRepository.save(new Score(0.0, gamePlayer1.getPlayer(), game));
 
                 return GameState.LOST;
             }
