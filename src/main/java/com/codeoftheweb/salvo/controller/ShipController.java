@@ -1,10 +1,8 @@
 package com.codeoftheweb.salvo.controller;
 
 import com.codeoftheweb.salvo.model.GamePlayer;
-import com.codeoftheweb.salvo.model.Player;
 import com.codeoftheweb.salvo.model.Ship;
 import com.codeoftheweb.salvo.repositories.GamePlayerRepository;
-import com.codeoftheweb.salvo.repositories.PlayerRepository;
 import com.codeoftheweb.salvo.repositories.ShipRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -53,7 +51,6 @@ public class ShipController {
                     HttpStatus.FORBIDDEN);
         }
 
-
         ships.forEach( ship -> { ship.setGamePlayer(gamePlayer);
 
             shipRepository.save(ship);
@@ -64,10 +61,12 @@ public class ShipController {
         return new ResponseEntity<>(makeMap("OK", "Ships added"), HttpStatus.CREATED);
     }
 
+    //AUTH ============================================================================================================/
     private boolean isGuest(Authentication authentication) {
         return authentication == null || authentication instanceof AnonymousAuthenticationToken;
     }
 
+    //AUX DTO =========================================================================================================/
     private Map<String, Object> makeMap(String key, Object value) {
         Map<String, Object> map = new HashMap<>();
         map.put(key,value);

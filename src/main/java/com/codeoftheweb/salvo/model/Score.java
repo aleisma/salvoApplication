@@ -1,7 +1,5 @@
 package com.codeoftheweb.salvo.model;
 
-import com.codeoftheweb.salvo.model.Game;
-import com.codeoftheweb.salvo.model.Player;
 import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -19,12 +17,12 @@ public class Score {
 
     private LocalDateTime finishDate;
 
-    //*===== RELATION 1-N BETWEEN Game-Score ==========
+    //*===== RELATION 1-N BETWEEN Game-Score ==========================================================================/
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="game_id")
     private Game game;
 
-    //*===== RELATION 1-N BETWEEN Player-Score ==========
+    //*===== RELATION 1-N BETWEEN Player-Score ========================================================================/
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="player_id")
     private Player player;
@@ -38,7 +36,7 @@ public class Score {
         this.score = score;
     }
 
-    //===== MAP Score==========
+    //===== MAP Score==================================================================================================/
     public Map<String, Object> makeScoreDTO() {
         Map<String, Object> dto = new LinkedHashMap<>();
         dto.put("player", this.getPlayer().getId());

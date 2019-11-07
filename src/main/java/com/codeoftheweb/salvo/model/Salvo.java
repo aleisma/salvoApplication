@@ -17,12 +17,12 @@ public class Salvo {
 
     private int turn;
 
-    //*===== LIST CREATED SALVO LOCATIONS ==========
+    //*===== LIST CREATED SALVO LOCATIONS =============================================================================/
     @ElementCollection
     @Column(name = "locations")
     private List<String> locations = new ArrayList<>();
 
-    //*===== RELATION 1-N BETWEEN Salvo-GamePlayer ==========
+    //*===== RELATION 1-N BETWEEN Salvo-GamePlayer ====================================================================/
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="gamePlayer_id")
     private GamePlayer gamePlayer;

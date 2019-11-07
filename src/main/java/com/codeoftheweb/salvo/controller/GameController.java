@@ -1,5 +1,4 @@
 package com.codeoftheweb.salvo.controller;
-
 import com.codeoftheweb.salvo.model.*;
 import com.codeoftheweb.salvo.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -218,12 +217,9 @@ public class GameController {
     //=================== CHECKING GAME STATE =========================================================================/
     private GameState checkGameState(GamePlayer gamePlayer1) {
 
-        int sumatoria;
-        int sumatoria2;
+        boolean opponentSunkShips;
+        boolean selfSunkShips;
         Game game = gamePlayer1.getGame();
-
-
-
 
         if (gamePlayer1.getShips().size() == 0) {
             return GameState.PLACESHIPS;
@@ -235,76 +231,76 @@ public class GameController {
 
         if (gamePlayer1.getGame().getGamePlayers().size() == 2) {
 
-            GamePlayer opponent = getOpponent(gamePlayer1).orElse(null);
+            GamePlayer opponent = getOpponent(gamePlayer1).orElse(new GamePlayer());
+
+            opponentSunkShips = hits(opponent, gamePlayer1);
+
+            selfSunkShips = hits(gamePlayer1, opponent);
+
+            if((gamePlayer1.getSalvoes().size() != 0 ) && (opponent.getSalvoes().size() != 0 )){
+
+                if ((gamePlayer1.getSalvoes().size() == opponent.getSalvoes().size()) && (opponentSunkShips) && (!selfSunkShips)) {
 
 
-            // Consigo sumatoria de hits de ambos players
-            sumatoria = hits(opponent, gamePlayer1);
+                    Score score = (new Score(1.0, gamePlayer1.getPlayer(), game));
 
-            sumatoria2 = hits(gamePlayer1, opponent);
+                    Score scoreFind = scoreRepository.findAll().stream()
+                                                               .filter(score1 -> score1.getGame() == score.getGame() && score.getPlayer() && score1.getPlayer() )
+                                                               .findAny().orElse(null);
 
-            if ((gamePlayer1.getSalvoes().size() == opponent.getSalvoes().size()) && (gamePlayer1.getId() < opponent.getId())
-                    && (sumatoria != 17) && (sumatoria2 != 17)) {
-                return GameState.PLAY;
+                    if(scoreFind == null){
+                        scoreRepository.save(score);
+                    }
+
+
+
+
+                    return GameState.WON;
+                }
             }
 
-            if (gamePlayer1.getSalvoes().size() < opponent.getSalvoes().size() && (sumatoria != 17) && (sumatoria2 != 17)) {
+            if ((gamePlayer1.getSalvoes().size() == opponent.getSalvoes().size()) && (opponentSunkShips) && (selfSunkShips)) {
+
+                scoreRepository.save(new Score( 0.5, gamePlayer1.getPlayer(), game));
+
+                return GameState.TIE;
+            }
+            if ((gamePlayer1.getSalvoes().size() == opponent.getSalvoes().size()) && (!opponentSunkShips) && (selfSunkShips)) {
+
+                scoreRepository.save(new Score(0.0, gamePlayer1.getPlayer(), game));
+
+                return GameState.LOST;
+            }
+
+            if ((gamePlayer1.getSalvoes().size() == opponent.getSalvoes().size()) && (gamePlayer1.getId() < opponent.getId())) {
+                return GameState.PLAY;
+            }
+            if (gamePlayer1.getSalvoes().size() < opponent.getSalvoes().size()){
                 return GameState.PLAY;
             }
             if ((gamePlayer1.getSalvoes().size() == opponent.getSalvoes().size()) && (gamePlayer1.getId() > opponent.getId())) {
                 return GameState.WAIT;
             }
-            if ((gamePlayer1.getSalvoes().size() > opponent.getSalvoes().size()) && (sumatoria != 17 && sumatoria2 != 17)) {
+            if (gamePlayer1.getSalvoes().size() > opponent.getSalvoes().size()){
                 return GameState.WAIT;
             }
 
-
-            System.out.println("hits player 1: " + sumatoria);
-            System.out.println("hits player 2: " + sumatoria2);
-
-            if ((gamePlayer1.getSalvoes().size() == opponent.getSalvoes().size()) && (sumatoria == 17 && sumatoria2 == 17)) {
-
-                System.out.println("hits player 1 en if: " + sumatoria);
-                System.out.println("hits player 2 en if: " + sumatoria2);
-
-                return GameState.TIE;
-            }
-
-            if ((gamePlayer1.getSalvoes().size() == opponent.getSalvoes().size()) && (sumatoria == 17)) {
-                return GameState.WON;
-            }
-
-            if ((gamePlayer1.getSalvoes().size() == opponent.getSalvoes().size())) {
-                return GameState.LOST;
-            }
         }
 
         return GameState.UNDEFINED;
     }
 
     //============================ SUMATORIA DE HITS ==================================================================/
+    private boolean hits(GamePlayer gamePlayer2, GamePlayer gamePlayer1) {
 
-        private int hits(GamePlayer gamePlayer2, GamePlayer gamePlayer1) {
-            int sumatoria = 0;
-            Set<Salvo> gp2salvos = gamePlayer2.getSalvoes();
-            for (Salvo salvo : gp2salvos) { // Cada salvo
-                for (String salvoLocation : salvo.getLocations()) { // Cada salvo location
-                    boolean hit = false;
-                    for (Ship ship : gamePlayer1.getShips()) { // Cada ship
-                        for (String shipLocation : ship.getLocations()) { // Cada ship location
-                            if (salvoLocation == shipLocation) {
-                                hit = true;
-                                sumatoria++;
-                            }
-                            if (hit) break;
-                        }
-                        if (hit) break;
-                    }
-                }
-            }
-            return sumatoria;
+        List<String>    allShipLocations    =   gamePlayer2.getShips().stream().flatMap(ship -> ship.getLocations().stream()).collect(Collectors.toList());
+        List<String>    allSalvoLocations   =   gamePlayer1.getSalvoes().stream().flatMap(salvo -> salvo.getLocations().stream()).collect(Collectors.toList());
+        System.out.println("ships"+allShipLocations);
+        System.out.println("salvos"+allSalvoLocations);
+        boolean allMacth    =   allSalvoLocations.containsAll(allShipLocations);
+        return allMacth;
 
-        }
+    }
 
     //====================== ALL GAMES ================================================================================/
     @RequestMapping("/games")
@@ -346,12 +342,14 @@ public class GameController {
         return new ResponseEntity<>(makeMap("gpid", gamePlayer.getId()), HttpStatus.CREATED);
     }
 
+    //================= MAP AUX =======================================================================================/
     private Map<String, Object> makeMap(String key, Object value) {
         Map<String, Object> map = new HashMap<>();
         map.put(key, value);
         return map;
     }
 
+    //=============================== AUTH ============================================================================/
     private boolean isGuest(Authentication authentication) {
         return authentication == null || authentication instanceof AnonymousAuthenticationToken;
 

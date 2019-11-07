@@ -1,12 +1,7 @@
 package com.codeoftheweb.salvo.controller;
-
-
 import com.codeoftheweb.salvo.model.Salvo;
 import com.codeoftheweb.salvo.repositories.GamePlayerRepository;
-import com.codeoftheweb.salvo.repositories.PlayerRepository;
-import com.codeoftheweb.salvo.model.Game;
 import com.codeoftheweb.salvo.model.GamePlayer;
-import com.codeoftheweb.salvo.model.Player;
 import com.codeoftheweb.salvo.repositories.SalvoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,9 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.*;
-import java.util.stream.Collectors;
+
 
 @RestController
 @RequestMapping("/api")
@@ -27,7 +21,7 @@ public class SalvoController {
     @Autowired
     SalvoRepository salvoRepository;
 
-    //================== GAMES/PLAYERS/nn/SALVOES ========================================
+    //================== GAMES/PLAYERS/nn/SALVOES =====================================================================/
     @RequestMapping("/games/players/{gamePlayerId}/salvoes")
     public ResponseEntity<Map<String, Object>> getSalvoes(@PathVariable long gamePlayerId,
                                                           Authentication  authentication,
@@ -68,7 +62,6 @@ public class SalvoController {
         else{
 
               return new ResponseEntity<>(makeMap("ERROR", "NO hay oponente no se puede guardar el salvo"), HttpStatus.FORBIDDEN);
-
       }
         salvo.setGamePlayer(gamePlayer);
           salvoRepository.save(salvo);
@@ -77,16 +70,18 @@ public class SalvoController {
 
         }
 
-        // Obtengo el player opponent
+    //OBTENGO EL OPONENTE =============================================================================================/
     private Optional <GamePlayer> getOpponent(GamePlayer self){
 
         return self.getGame().getGamePlayers().stream().filter(gamePlayer -> gamePlayer.getId() != self.getId()).findFirst();
     }
 
+    //AUTH ============================================================================================================/
     private boolean isGuest(Authentication authentication) {
         return authentication == null || authentication instanceof AnonymousAuthenticationToken;
     }
 
+    //AUX DTO =========================================================================================================/
     private Map<String, Object> makeMap(String key, Object value) {
         Map<String, Object> map = new HashMap<>();
         map.put(key,value);

@@ -14,11 +14,11 @@ public class Game {
     private Long id;
 
     private LocalDateTime creationDate = LocalDateTime.now();
-    //*===== RELATION 1-N BETWEEN Game-GamePlayer ==========
+    //*===== RELATION 1-N BETWEEN Game-GamePlayer =====================================================================/
     @OneToMany(mappedBy = "game", fetch = FetchType.EAGER)
     private Set<GamePlayer> gamePlayers;
 
-    //*===== RELATION 1-N BETWEEN Player-Score ==========
+    //*===== RELATION 1-N BETWEEN Player-Score ========================================================================/
     @OneToMany(mappedBy = "game", fetch = FetchType.EAGER)
     public Set<Score> scores;
 
@@ -28,7 +28,7 @@ public class Game {
         this.creationDate = LocalDateTime.now().plusHours(horas);
     }
 
-    //===== MAP Game ==========
+    //===== MAP Game ==================================================================================================/
     public Map<String, Object> makeGameDTO() {
         Map<String, Object> dto = new LinkedHashMap<>();
         dto.put("id", this.getId());

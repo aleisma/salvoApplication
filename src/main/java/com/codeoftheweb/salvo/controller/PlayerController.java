@@ -23,7 +23,7 @@ public class PlayerController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    //=================== PLAYERS ===================================================
+    //=================== PLAYERS =====================================================================================/
     @RequestMapping(path = "/players", method = RequestMethod.POST)
     public ResponseEntity<Object> register(@RequestParam String email, @RequestParam String password) {
 
@@ -39,15 +39,18 @@ public class PlayerController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    private boolean isGuest(Authentication authentication) {
-        return authentication == null || authentication instanceof AnonymousAuthenticationToken;
-    }
-
+    //================= MAP AUX =======================================================================================/
     private Map<String, Object> makeMap(String key, Object value) {
         Map<String, Object> map = new HashMap<>();
         map.put(key,value);
         return map;
     }
+
+    //=============================== AUTH ============================================================================/
+    private boolean isGuest(Authentication authentication) {
+        return authentication == null || authentication instanceof AnonymousAuthenticationToken;
+    }
+
 
 }
 

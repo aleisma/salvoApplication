@@ -13,13 +13,13 @@ public class Ship {
     @Id
     private long id;
     private String type;
-    //*===== LIST CREATED SHIP LOCATIONS ==========
+    //*===== LIST CREATED SHIP LOCATIONS ==============================================================================/
     @ElementCollection
     @Column(name="locations")
 
     private List<String> locations;
 
-    //*===== RELATION 1-N BETWEEN Ship-GamePlayer ==========
+    //*===== RELATION 1-N BETWEEN Ship-GamePlayer =====================================================================/
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "gamePlayer_id")
     private GamePlayer gamePlayer;
@@ -32,7 +32,7 @@ public class Ship {
         this.locations  = locations;
     }
 
-    //===== MAP Ship-GamePlayer ==========
+    //===== MAP Ship-GamePlayer =======================================================================================/
     public Map<String, Object> getShipDTO() {
         Map<String,Object>  dto= new LinkedHashMap<>();
         dto.put("type", this.type);
@@ -71,12 +71,5 @@ public class Ship {
     public void setId(long id) {
         this.id = id;
     }
-
-
-
-
-
-
-
 
 }

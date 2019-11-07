@@ -19,11 +19,11 @@ public class Player {
 
     private String password;
 
-    //*===== RELATION 1-N BETWEEN Player-GamePlayer ==========
+    //*===== RELATION 1-N BETWEEN Player-GamePlayer ===================================================================/
     @OneToMany(mappedBy = "player", fetch = FetchType.EAGER)
     public Set<GamePlayer> gamePlayers;
 
-    //*===== RELATION 1-N BETWEEN Player-Score ==========
+    //*===== RELATION 1-N BETWEEN Player-Score ========================================================================/
     @OneToMany(mappedBy = "player", fetch = FetchType.EAGER)
     public Set<Score> scores;
 
@@ -35,7 +35,7 @@ public class Player {
 
     }
 
-    //===== MAP Player-GamePlayer ==========
+    //===== MAP Player-GamePlayer =====================================================================================/
     public Map<String, Object> makePlayerDTO() {
         Map<String, Object> dto = new LinkedHashMap<>();
         dto.put("id", this.getId());
