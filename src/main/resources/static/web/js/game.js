@@ -424,6 +424,7 @@ function makeGameRecordTable (hitsArray, gameRecordTableId) {
             if (playTurn.damages.carrier === 5){
                 hitsReport += "SUNK! ";
                 $(playerTag + 'carrierIcon').html('<img src="img/carriersunk.png">');
+
                 shipsAfloat--;
             }
         }
@@ -457,6 +458,10 @@ function makeGameRecordTable (hitsArray, gameRecordTableId) {
             if (playTurn.damages.patrolboat === 2){
                 hitsReport += "SUNK! ";
                 $(playerTag + 'patrolboatIcon').html('<img src="img/patrolboatsunk.png">');
+
+
+
+
                 shipsAfloat--;
             }
         }

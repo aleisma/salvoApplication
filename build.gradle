@@ -11,8 +11,9 @@ sourceCompatibility = '1.8'
 repositories {
 	mavenCentral()
 
-
 }
+
+
 
 bootRun {
 	sourceResources sourceSets.main; //evita reiniciar el server
@@ -26,4 +27,7 @@ dependencies {
 	runtimeOnly 'com.h2database:h2'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	compile("org.springframework.boot:spring-boot-starter-security")
+
+
+
 }
